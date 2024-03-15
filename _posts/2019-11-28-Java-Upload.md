@@ -6,6 +6,9 @@ tags: Java
 excerpt: 上传图片+java 后端接收实例
 ---
 
+* content
+{:toc}
+
 ### 导入包
 
 ```
@@ -140,11 +143,11 @@ File f1 = fi.getStoreLocation();
 MultipartFile f = file;
 File f1 = null;
 try {
-	File dfile = File.createTempFile("prefix", "_" + f.getOriginalFilename());
-	f.transferTo(dfile);
-	f1 = dfile;
+ File dfile = File.createTempFile("prefix", "_" + f.getOriginalFilename());
+ f.transferTo(dfile);
+ f1 = dfile;
 } catch (IOException e) {
-	e.printStackTrace();
+ e.printStackTrace();
 }
 ```
 
@@ -152,11 +155,7 @@ try {
 
 先创建一个新的临时文件dfile对象，然后调用MultipartFile.transferTo(File dfile)方法把MultipartFile转换为File对象
 
-
-
 `MultipartFile`传值`text`报错400
-
-
 
 ### application.yml配置事例
 
@@ -172,11 +171,10 @@ servlet:
 
 把图片置入tomcat文件夹的`webapps`中相应的项目即可，值得注意的是在linux服务器上跑tomcat获取的路径是`/usr/local/tomcat`，因此相应创建图片目录的路径应该为`./webapps/项目名/文件名`，上传图片之后直接在网址中输入相应的路径就能看到图片啦！
 
-
-
-> https://blog.csdn.net/qq__1358521215/article/details/78884334
+> <https://blog.csdn.net/qq__1358521215/article/details/78884334>
 >
-> https://blog.csdn.net/ramesha/article/details/84925390
+> <https://blog.csdn.net/ramesha/article/details/84925390>
+>
 ### 过滤上传图片格式
 
 ```

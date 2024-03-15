@@ -6,6 +6,9 @@ tags: [Java,Developer_Tools]
 excerpt: Spring部署Redis以及配置与使用
 ---
 
+* content
+{:toc}
+
 ### Redis安全操作
 
 获取密码
@@ -700,4 +703,3 @@ slowlog-max-len 1024
 # include /path/to/local.conf
 # include /path/to/other.conf
 ```
-

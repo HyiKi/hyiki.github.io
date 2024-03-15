@@ -6,6 +6,9 @@ tags: [Java,FrameWork]
 excerpt: Spring FrameWork + Spring Security对用户完成认证、授权操作。
 ---
 
+* content
+{:toc}
+
 ### 简述
 
 #### Spring FrameWork + Spring Security
@@ -33,17 +36,17 @@ Spring Security 是 Spring 基于AOP（Aspect Oriented Programming）和 Servlet
 > Spring Security
 > 主要jar包功能介绍 spring-security-core.jar 核心包，任何Spring Security功能都需要此包。
 >
-> spring-security-web.jar 
+> spring-security-web.jar
 > web工程必备，包含过滤器和相关的Web安全基础结构代码。
 >
-> spring-security-conﬁg.jar 
-> 用于解析xml配置文件，用到Spring Security的xml配置文件的就要用到此包。 
+> spring-security-conﬁg.jar
+> 用于解析xml配置文件，用到Spring Security的xml配置文件的就要用到此包。
 >
 > spring-security-taglibs.jar
 > Spring Security提供的动态标签库，jsp页面可以用。
 
 ```
-		<dependency>
+  <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
             <version>5.1.5.RELEASE</version>
@@ -63,12 +66,12 @@ Spring Security 是 Spring 基于AOP（Aspect Oriented Programming）和 Servlet
    <!--SpringSecurity核心过滤器链-->
    <!--springSecurityFilterChain名词不能修改-->
    <filter>
-   	<filter-name>springSecurityFilterChain</filter-name>
-   	<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
    </filter>
    <filter-mapping>
-   	<filter-name>springSecurityFilterChain</filter-name>
-   	<url-pattern>/*</url-pattern>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/*</url-pattern>
    </filter-mapping>
    ```
 
@@ -84,17 +87,17 @@ Spring Security 是 Spring 基于AOP（Aspect Oriented Programming）和 Servlet
            xmlns:mvc="http://www.springframework.org/schema/mvc"
            xmlns:security="http://www.springframework.org/schema/security"
            xsi:schemaLocation="http://www.springframework.org/schema/beans
-   			    http://www.springframework.org/schema/beans/spring-beans.xsd
-   			    http://www.springframework.org/schema/context
-   			    http://www.springframework.org/schema/context/spring-context.xsd
-   			    http://www.springframework.org/schema/aop
-   			    http://www.springframework.org/schema/aop/spring-aop.xsd
-   			    http://www.springframework.org/schema/tx
-   			    http://www.springframework.org/schema/tx/spring-tx.xsd
-   			    http://www.springframework.org/schema/mvc
-   			    http://www.springframework.org/schema/mvc/spring-mvc.xsd
+          http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context.xsd
+          http://www.springframework.org/schema/aop
+          http://www.springframework.org/schema/aop/spring-aop.xsd
+          http://www.springframework.org/schema/tx
+          http://www.springframework.org/schema/tx/spring-tx.xsd
+          http://www.springframework.org/schema/mvc
+          http://www.springframework.org/schema/mvc/spring-mvc.xsd
                    http://www.springframework.org/schema/security
-   			    http://www.springframework.org/schema/security/spring-security.xsd">
+          http://www.springframework.org/schema/security/spring-security.xsd">
    
        <!--释放静态资源-->
        <security:http pattern="/css/**" security="none"/>
@@ -155,91 +158,63 @@ Spring Security 是 Spring 基于AOP（Aspect Oriented Programming）和 Servlet
 3. applicationContext.xml
 
    ```
-   	<!--引入springsecurity的配置文件-->
+    <!--引入springsecurity的配置文件-->
        <import resource="classpath:spring-security.xml"/>
    ```
 
 ### Spring Security Filter Clain过滤器链
 
 1. org.springframework.security.web.context.SecurityContextPersistenceFilter
-   
+
    > SecurityContextPersistenceFilter主要是使用SecurityContextRepository在session中保存或更新一个 SecurityContext，并将SecurityContext给以后的过滤器使用，来为后续ﬁlter建立所需的上下文。 SecurityContext中存储了当前用户的认证以及权限信息。
 
-  
+2. org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter
 
-2. org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter 
-   
-   > 此过滤器用于集成SecurityContext到Spring异步执行机制中的WebAsyncManager首当其冲的一个过滤器，作用之重要，自不必多言。 
-
-  
+   > 此过滤器用于集成SecurityContext到Spring异步执行机制中的WebAsyncManager首当其冲的一个过滤器，作用之重要，自不必多言。
 
 3. org.springframework.security.web.header.HeaderWriterFilter
    > 向请求的Header中添加相应的信息,可在http标签内部使用security:headers来控制
 
-   
+4. org.springframework.security.web.csrf.CsrfFilter
 
-4. org.springframework.security.web.csrf.CsrfFilter 
-   
-   > csrf又称跨域请求伪造，SpringSecurity会对所有post请求验证是否包含系统生成的csrf的token信息， 如果不包含，则报错。起到防止csrf攻击的效果。 
-
-  
+   > csrf又称跨域请求伪造，SpringSecurity会对所有post请求验证是否包含系统生成的csrf的token信息， 如果不包含，则报错。起到防止csrf攻击的效果。
 
 5. org.springframework.security.web.authentication.logout.LogoutFilter
-   
-   > 匹配URL为/logout的请求，实现用户退出,清除认证信息。 
 
-  
+   > 匹配URL为/logout的请求，实现用户退出,清除认证信息。
 
 6. org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-   
-   > 认证操作全靠这个过滤器，默认匹配URL为/login且必须为POST请求。 
 
-  
+   > 认证操作全靠这个过滤器，默认匹配URL为/login且必须为POST请求。
 
 7. org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter
-   
+
    > 如果没有在配置文件中指定认证页面，则由该过滤器生成一个默认认证页面。
 
-  
-
 8. org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter
-   
+
    > 由此过滤器可以生产一个默认的退出登录页面
 
-  
-
-9. org.springframework.security.web.authentication.www.BasicAuthenticationFilter 
+9. org.springframework.security.web.authentication.www.BasicAuthenticationFilter
    > 此过滤器会自动解析HTTP请求中头部名字为Authentication，且以Basic开头的头信息。
 
-   
-
-10. org.springframework.security.web.savedrequest.RequestCacheAwareFilter 
+10. org.springframework.security.web.savedrequest.RequestCacheAwareFilter
     > 通过HttpSessionRequestCache内部维护了一个RequestCache，用于缓存HttpServletRequest
-
-    
 
 11. org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter
     > 针对ServletRequest进行了一次包装，使得request具有更加丰富的API  
 
-    
-
-12. org.springframework.security.web.authentication.AnonymousAuthenticationFilter 
+12. org.springframework.security.web.authentication.AnonymousAuthenticationFilter
     > 当SecurityContextHolder中认证信息为空,则会创建一个匿名用户存入到SecurityContextHolder中。 spring security为了兼容未登录的访问，也走了一套认证流程，只不过是一个匿名的身份。
 
-    
-
-13. org.springframework.security.web.session.SessionManagementFilter 
+13. org.springframework.security.web.session.SessionManagementFilter
     > SecurityContextRepository限制同一用户开启多个会话的数量
 
-    
-
-14. org.springframework.security.web.access.ExceptionTranslationFilter 
+14. org.springframework.security.web.access.ExceptionTranslationFilter
     > 异常转换过滤器位于整个springSecurityFilterChain的后方，用来转换整个链路中出现的异常
 
-    
-
 15. org.springframework.security.web.access.intercept.FilterSecurityInterceptor
-    
+
     > 获取所配置资源访问的授权信息，根据SecurityContextHolder中存储的用户信息来决定其是否有权限。
 
 ### Spring Security的 csrf 防护机制
@@ -253,15 +228,15 @@ Spring Security 是 Spring 基于AOP（Aspect Oriented Programming）和 Servlet
        <security:csrf disabled="true"/>
    ```
 
-2.  页面请求中携带token请求
+2. 页面请求中携带token请求
 
-   1. 添加Spring Security标签库
+1. 添加Spring Security标签库
 
       ```
       <%@taglib uri="http://www.springframework.org/security/tags" prefix="security"%>
       ```
 
-   2. 在表单中加入语句添加csrf防护
+2. 在表单中加入语句添加csrf防护
 
       ```
       <security:csrfInput/>
@@ -271,29 +246,29 @@ Spring Security 是 Spring 基于AOP（Aspect Oriented Programming）和 Servlet
 
 ```
 <form action="${pageContext.request.contextPath}/login" method="post">
-	<security:csrfInput/>
-	<div class="form-group has-feedback">
-		<input type="text" name="username" class="form-control"
-			placeholder="用户名"> <span
-			class="glyphicon glyphicon-envelope form-control-feedback"></span>
-	</div>
-	<div class="form-group has-feedback">
-		<input type="password" name="password" class="form-control"
-			placeholder="密码"> <span
-			class="glyphicon glyphicon-lock form-control-feedback"></span>
-	</div>
-	<div class="row">
-		<div class="col-xs-8">
-			<div class="checkbox icheck">
-				<label><input type="checkbox" name="remember-me" value="true"> 记住 下次自动登录</label>
-			</div>
-		</div>
-		<!-- /.col -->
-		<div class="col-xs-4">
-			<button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
-		</div>
-		<!-- /.col -->
-	</div>
+ <security:csrfInput/>
+ <div class="form-group has-feedback">
+  <input type="text" name="username" class="form-control"
+   placeholder="用户名"> <span
+   class="glyphicon glyphicon-envelope form-control-feedback"></span>
+ </div>
+ <div class="form-group has-feedback">
+  <input type="password" name="password" class="form-control"
+   placeholder="密码"> <span
+   class="glyphicon glyphicon-lock form-control-feedback"></span>
+ </div>
+ <div class="row">
+  <div class="col-xs-8">
+   <div class="checkbox icheck">
+    <label><input type="checkbox" name="remember-me" value="true"> 记住 下次自动登录</label>
+   </div>
+  </div>
+  <!-- /.col -->
+  <div class="col-xs-4">
+   <button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
+  </div>
+  <!-- /.col -->
+ </div>
 </form>
 ```
 
@@ -301,8 +276,8 @@ Spring Security 是 Spring 基于AOP（Aspect Oriented Programming）和 Servlet
 
 ```
 <form action="${pageContext.request.contextPath}/logout" method="post">
-	<security:csrfInput/>
-	<input type="submit" value="注销">
+ <security:csrfInput/>
+ <input type="submit" value="注销">
 </form>
 ```
 
@@ -345,7 +320,7 @@ public final class CsrfFilter extends OncePerRequestFilter {
         Assert.notNull(csrfTokenRepository, "csrfTokenRepository cannot be null");
         this.tokenRepository = csrfTokenRepository;
     }
-	//通过这里可以看出SpringSecurity的csrf机制把请求方式分成两类来处理 
+ //通过这里可以看出SpringSecurity的csrf机制把请求方式分成两类来处理 
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         request.setAttribute(HttpServletResponse.class.getName(), response);
         CsrfToken csrfToken = this.tokenRepository.loadToken(request);
@@ -392,7 +367,7 @@ public final class CsrfFilter extends OncePerRequestFilter {
         Assert.notNull(accessDeniedHandler, "accessDeniedHandler cannot be null");
         this.accessDeniedHandler = accessDeniedHandler;
     }
-	
+ 
     private static final class DefaultRequiresCsrfMatcher implements RequestMatcher {
         private final HashSet<String> allowedMethods;
 
@@ -423,7 +398,7 @@ public final class CsrfFilter extends OncePerRequestFilter {
 
    ```
    for (SysRole role : roles) {
-   	authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
+    authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
    }
    ```
 
@@ -432,10 +407,10 @@ public final class CsrfFilter extends OncePerRequestFilter {
 
 4. **四个true**
 
-   - boolean enabled 是否可用
-   - boolean accountNonExpired 账户是否失效
-   - boolean credentialsNonExpired 秘密是否失效
-   - boolean accountNonLocked 账户是否锁定
+   * boolean enabled 是否可用
+   * boolean accountNonExpired 账户是否失效
+   * boolean credentialsNonExpired 秘密是否失效
+   * boolean accountNonLocked 账户是否锁定
 
 ```
     /**
@@ -511,7 +486,7 @@ public final class CsrfFilter extends OncePerRequestFilter {
 
 ```
 @Override    
-public void save(SysUser user) {        //对密码进行加密，然后再入库        						user.setPassword(passwordEncoder.encode(user.getPassword()));        					userDao.save(user);
+public void save(SysUser user) {        //对密码进行加密，然后再入库              user.setPassword(passwordEncoder.encode(user.getPassword()));             userDao.save(user);
 }
 ```
 
@@ -556,9 +531,10 @@ PRIMARY KEY (`series`)
 **spring-security.xml**
 
         <security:remember-me
-        		data-source-ref="dataSource"
+          data-source-ref="dataSource"
                 token-validity-seconds="60"
                 remember-me-parameter="remember-me"/>
+
 #### 显示当前用户的用户名
 
 ```
@@ -624,9 +600,9 @@ public class ProductController {
 ```
 <!--设置可以用spring的el表达式配置Spring Security并自动生成对应配置组件（过滤器）-->
 <security:http auto-config="true" use-expressions="true">
-	<!--省略其它配置-->    
-	<!--403异常处理-->    
-	<security:access-denied-handler error-page="/403.jsp"/>
+ <!--省略其它配置-->    
+ <!--403异常处理-->    
+ <security:access-denied-handler error-page="/403.jsp"/>
 </security:http>
 ```
 
@@ -1029,7 +1005,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 1. 在启动类添加注释`@EnableGlobalMethodSecurity(securedEnabled=true)`
 2. 控制层的接口处添加注释`@Secured("<角色>")`
 
-#### 分布式，重点！
+#### 分布式，重点
 
 分布式认证适用于前后端分离的项目，比较适合当前的网页开发。
 
@@ -1042,11 +1018,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 ##### 非对称加密RSA
 
-- 基本原理：同时生成两把密钥：私钥和公钥，私钥隐秘保存，公钥可以下发给信任客户端 
-  - 私钥加密，持有私钥或公钥才可以解密 
-  - 公钥加密，持有私钥才可解密 
-- 优点：安全，难以破解 
-- 缺点：算法比较耗时，为了安全，可以接受 
+* 基本原理：同时生成两把密钥：私钥和公钥，私钥隐秘保存，公钥可以下发给信任客户端
+  * 私钥加密，持有私钥或公钥才可以解密
+  * 公钥加密，持有私钥才可解密
+* 优点：安全，难以破解
+* 缺点：算法比较耗时，为了安全，可以接受
 
 **RSA工具类Utils**
 
@@ -1156,9 +1132,9 @@ public class RsaUtils {
 
 **组成的三部分**
 
-- 头部：主要设置一些规范信息，签名部分的编码格式就在头部中声明。
-- 载荷：token中存放有效信息的部分，比如用户名，用户角色，过期时间等，但是不要放密码，会泄露！ 
-- 签名：将头部与载荷分别采用base64编码后，用“.”相连，再加入盐，最后使用头部声明的编码类型进行编 码，就得到了签名。
+* 头部：主要设置一些规范信息，签名部分的编码格式就在头部中声明。
+* 载荷：token中存放有效信息的部分，比如用户名，用户角色，过期时间等，但是不要放密码，会泄露！
+* 签名：将头部与载荷分别采用base64编码后，用“.”相连，再加入盐，最后使用头部声明的编码类型进行编 码，就得到了签名。
 
 **JWT依赖包**
 
@@ -1296,4 +1272,3 @@ public class JwtUtils {
 ```
 
 ##### Spring Security + JWT + RSA分布式认证思路
-

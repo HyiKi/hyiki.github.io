@@ -6,15 +6,18 @@ tags: [Java,MongoDB]
 excerpt: MongoDB在Java项目上实现autokey主键自增
 ---
 
+* content
+{:toc}
+
 ### 前言
 
-​	MongoDB的文档固定是使用“_id”作为主键的，它可以是任何类型的，默认是个ObjectId对象（在Java中则表现为字符串），那么为什么MongoDB没有采用其他比较常规的做法（比如MySql的自增主键），而是采用了ObjectId的形式来实现，主要是ObjectId采用时间戳+机器标识符+PID+计数器来实现的。
+​ MongoDB的文档固定是使用“_id”作为主键的，它可以是任何类型的，默认是个ObjectId对象（在Java中则表现为字符串），那么为什么MongoDB没有采用其他比较常规的做法（比如MySql的自增主键），而是采用了ObjectId的形式来实现，主要是ObjectId采用时间戳+机器标识符+PID+计数器来实现的。
 
-​	因此，MongoDB不使用自增主键，而是使用ObjectId。在分布式环境中，多个机器同步一个自增ID不但费时且费力，MongoDB从一开始就是设计用来做分布式数据库的，处理多个节点是一个核心要求，而ObjectId在分片环境中要容易生成的多。
+​ 因此，MongoDB不使用自增主键，而是使用ObjectId。在分布式环境中，多个机器同步一个自增ID不但费时且费力，MongoDB从一开始就是设计用来做分布式数据库的，处理多个节点是一个核心要求，而ObjectId在分片环境中要容易生成的多。
 
 ### autokey主键自增的意义
 
-​	前言可见ObjectId有很多的好处，可是在某种场景下，例如我在学校图书馆做的项目中，既要利用到mongodb存储大量的学生数据，又要记录某位学生是第几个使用该功能时，设置主键自增就很好地实现这个需求。
+​ 前言可见ObjectId有很多的好处，可是在某种场景下，例如我在学校图书馆做的项目中，既要利用到mongodb存储大量的学生数据，又要记录某位学生是第几个使用该功能时，设置主键自增就很好地实现这个需求。
 
 ### 定义注解AutoIncKey
 
@@ -191,11 +194,10 @@ public class User {
 
 ```
 public void save() {
-	User user = new User();
-	//设置User信息
-	service.save(user);
-	// service.update(user);
-	System.out.println("已生成ID：" + stu.getId());
+ User user = new User();
+ //设置User信息
+ service.save(user);
+ // service.update(user);
+ System.out.println("已生成ID：" + stu.getId());
 }
 ```
-

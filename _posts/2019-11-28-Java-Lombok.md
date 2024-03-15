@@ -6,18 +6,24 @@ tags: Developer_Tools
 excerpt: Lombok介绍、使用方法和总结
 ---
 
+* content
+{:toc}
+
 ## Lombok背景介绍
+
 官方介绍如下：
 
 > Project Lombok makes java a spicier language by adding 'handlers' that know how to build and compile simple, boilerplate-free, not-quite-java code.
 
 大致意思是Lombok通过增加一些“处理程序”，可以让java变得简洁、快速。
+
 ## Lombok使用方法
+
 Lombok能以简单的注解形式来简化java代码，提高开发人员的开发效率。例如开发中经常需要写的javabean，都需要花时间去添加相应的getter/setter，也许还要去写构造器、equals等方法，而且需要维护，当属性多时会出现大量的getter/setter方法，这些显得很冗长也没有太多技术含量，一旦修改属性，就容易出现忘记修改对应方法的失误。
 
 Lombok能通过注解的方式，在编译时自动为属性生成构造器、getter/setter、equals、hashcode、toString方法。出现的神奇就是在源码中没有getter和setter方法，但是在编译生成的字节码文件中有getter和setter方法。这样就省去了手动重建这些代码的麻烦，使代码看起来更简洁些。
 
-Lombok的使用跟引用jar包一样，可以在官网（https://projectlombok.org/download ）下载jar包，也可以使用maven添加依赖：
+Lombok的使用跟引用jar包一样，可以在官网（<https://projectlombok.org/download> ）下载jar包，也可以使用maven添加依赖：
 
     <dependency>
         <groupId>org.projectlombok</groupId>
@@ -29,6 +35,7 @@ Lombok的使用跟引用jar包一样，可以在官网（https://projectlombok.o
 接下来我们来分析Lombok中注解的具体用法。
 
 ## @ Data
+
 @ Data注解在类上，会为类的所有属性自动生成setter/getter、equals、canEqual、hashCode、toString方法，如为final属性，则不会为该属性生成setter方法。
 
 官方实例如下：
@@ -51,7 +58,6 @@ Lombok的使用跟引用jar包一样，可以在官网（https://projectlombok.o
         private final T value;
       }
     }
-    
 
 如不使用Lombok，则实现如下：
 
@@ -174,7 +180,6 @@ Lombok的使用跟引用jar包一样，可以在官网（https://projectlombok.o
         }
       }
     }
-    
 
 ## @ Getter/@ Setter
 
@@ -194,7 +199,6 @@ Lombok的使用跟引用jar包一样，可以在官网（https://projectlombok.o
         return String.format("%s (age: %d)", name, age);
       }
     }
-    
 
 如果不使用Lombok：
 
@@ -220,8 +224,6 @@ Lombok的使用跟引用jar包一样，可以在官网（https://projectlombok.o
         this.name = name;
       }
     }
-    
-	
 
 ## @ NonNull
 
@@ -239,8 +241,7 @@ Lombok的使用跟引用jar包一样，可以在官网（https://projectlombok.o
         this.name = person.getName();
       }
     }
-	
-
+ 
 不使用Lombok：
 
     import lombok.NonNull;
@@ -256,9 +257,9 @@ Lombok的使用跟引用jar包一样，可以在官网（https://projectlombok.o
         this.name = person.getName();
       }
     }
-	
-
+ 
 ## @ Cleanup
+
 该注解能帮助我们自动调用close()方法，很大的简化了代码。
 
 示例如下：
@@ -278,8 +279,7 @@ Lombok的使用跟引用jar包一样，可以在官网（https://projectlombok.o
         }
       }
     }
-	
-
+ 
 如不使用Lombok，则需如下：
 
     import java.io.*;
@@ -308,9 +308,9 @@ Lombok的使用跟引用jar包一样，可以在官网（https://projectlombok.o
         }
       }
     }
-	
-
+ 
 ## @ EqualsAndHashCode
+
 默认情况下，会使用所有非静态（non-static）和非瞬态（non-transient）属性来生成equals和hasCode，也能通过exclude注解来排除一些属性。
 
 示例如下：
@@ -340,9 +340,9 @@ Lombok的使用跟引用jar包一样，可以在官网（https://projectlombok.o
         }
       }
     }
-	
-
+ 
 ## @ ToString
+
 类使用@ ToString注解，Lombok会生成一个toString()方法，默认情况下，会输出类名、所有属性（会按照属性定义顺序），用逗号来分割。
 
 通过将includeFieldNames参数设为true，就能明确的输出toString()属性。这一点是不是有点绕口，通过代码来看会更清晰些。
@@ -372,8 +372,7 @@ Lombok的使用跟引用jar包一样，可以在官网（https://projectlombok.o
         }
       }
     }
-	
-
+ 
 不使用Lombok的示例如下：
 
     import java.util.Arrays;
@@ -406,9 +405,9 @@ Lombok的使用跟引用jar包一样，可以在官网（https://projectlombok.o
         return "ToStringExample(" + this.getName() + ", " + this.shape + ", " + Arrays.deepToString(this.tags) + ")";
       }
     }
-	
-
+ 
 ## @ NoArgsConstructor, @ RequiredArgsConstructor and @ AllArgsConstructor
+
 无参构造器、部分参数构造器、全参构造器。Lombok没法实现多种参数构造器的重载。
 
     Lombok示例代码如下：

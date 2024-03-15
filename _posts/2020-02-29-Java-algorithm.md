@@ -6,23 +6,22 @@ tags: Java
 excerpt: 记录着使用Java做算法题的基本操作
 ---
 
+* content
+{:toc}
+
 #### —. 在java中的基本类包
 
-import java.io.*;//BufferedInputStream 
+import java.io.*;//BufferedInputStream
 
 import java.util.*; //输入Scanner
 
 import java.math.*; //BigInteger && BigDecimal
-
- 
 
 #### 二. 输入与输出
 
 读入: Scanner cin = new Scanner (System.in);
 
 推荐：Scanner cin = new Scanner (new BufferedInputStream (System.in));
-
-
 
 Scanner cin = new Scanner(System.in);
 
@@ -47,13 +46,13 @@ Scanner类提供了非常丰富的成员函数来负责读取各种数据类型:
 
 **对于输出浮点数保留几位小数的问题，可以使用DecimalFormat类**，
 
-import java.text.*; 
+import java.text.*;
 
-DecimalFormat f = new DecimalFormat("#.00#"); 
+DecimalFormat f = new DecimalFormat("#.00#");
 
-DecimalFormat g = new DecimalFormat("0.000"); 
+DecimalFormat g = new DecimalFormat("0.000");
 
-double a = 123.45678, b = 0.12; 
+double a = 123.45678, b = 0.12;
 
 System.out.println(f.format(a)); //123.457
 
@@ -61,15 +60,11 @@ System.out.println(f.format(b)); //.12
 
 System.out.println(g.format(b)); //0.120
 
-
-
 System.out.print(); // cout << …;
 
 System.out.println(); //与C++的cout << … <<endl;
 
-System.out.printf();	//与C中的printf用法类似.
-
- 
+System.out.printf(); //与C中的printf用法类似.
 
 #### 三. 定义变量
 
@@ -108,8 +103,6 @@ char：字符型，长度16位，支持所有的UCS-2和ASCII编码。
 
 除了以上的8种基本数据类型,对于ACMer还有BigInteger,BigDecimal,String三个类经常使用.
 
- 
-
 #### 四.写法
 
 import java.math.*;
@@ -117,8 +110,6 @@ import java.math.*;
 import java.io.*;
 
 import java.util.*;
-
- 
 
 public class Main {
 
@@ -128,22 +119,18 @@ public class Main {
 
 }
 
- 
-
 #### 五.注意事项
 
-1. Java 是面向对象的语言，思考方法需要变换一下，里面的函数统称为方法，不要搞错。 
-2. Java 里的数组有些变动，多维数组的内部其实都是指针，所以**Java不支持fill多维数组**。数组定义后必须初始化，如 int[] a = new int[100]; 
-3. 布尔类型为 boolean，只有true和false二值，在 if (...) / while (...) 等语句的条件中必须为boolean类型。 **在C/C++中的 if (n % 2) ... 在Java中无法编译通过。** 
-4. 下面在java.util包里Arrays类的几个方法可替代C/C++里的**memset**、**qsort/sort** 和 bsearch: 
+1. Java 是面向对象的语言，思考方法需要变换一下，里面的函数统称为方法，不要搞错。
+2. Java 里的数组有些变动，多维数组的内部其实都是指针，所以**Java不支持fill多维数组**。数组定义后必须初始化，如 int[] a = new int[100];
+3. 布尔类型为 boolean，只有true和false二值，在 if (...) / while (...) 等语句的条件中必须为boolean类型。 **在C/C++中的 if (n % 2) ... 在Java中无法编译通过。**
+4. 下面在java.util包里Arrays类的几个方法可替代C/C++里的**memset**、**qsort/sort** 和 bsearch:
 
 **Arrays.fill()**
 
 **Arrays.sort()**
 
-Arrays.binarySearch() 
-
-
+Arrays.binarySearch()
 
 #### 六.变量的初始化值
 
@@ -162,8 +149,6 @@ Arrays.binarySearch()
 | 数组(未初始化) | NULL                             |
 | 数组(初始化)   | 数组各个元素的值，其类型的默认值 |
 
-
-
 #### 七.Collection集合接口方法说明
 
 | 方法名                                    | 说明                                                         |
@@ -179,8 +164,6 @@ Arrays.binarySearch()
 | boolean retainAll(Collection<?> c)        | 从指定集合中保留包含集合c的元素,其他元素则删除               |
 | int size()                                | 集合的元素个数                                               |
 | T[] toArray(T[] a)                        | 将集合转换为T类型的数组                                      |
-
-
 
 #### 八.String的常用方法
 
@@ -210,8 +193,6 @@ str = String.valueOf(bm);//char[]->String
 | char[] toCharArray()                           | 将此字符串转换为新的字符数组                                 |
 | static String valueOf(char[] data)             | 返回 char数组参数的字符串 char形式                           |
 
-
-
 #### 九、数组
 
 **System.arraycopy应用于自制数组ArrayList的remove删除元素**
@@ -239,16 +220,16 @@ copyOf()的第二个自变量指定要建立的**新数组长度**，如果新�
 import java.util.Arrays;
 
 public class ArrayDemo {
-	public static void main(String[] args) {
-    	int[] arr1 = {1, 2, 3, 4, 5}; 
-    	int[] arr2 = Arrays.copyOf(arr1, 5);
-    	int[] arr3 = Arrays.copyOf(arr1, 10);
-    	for(int i = 0; i < arr2.length; i++) 
-        	System.out.print(arr2[i] + " "); 
-    		System.out.println();
-    	for(int i = 0; i < arr3.length; i++) 
-        	System.out.print(arr3[i] + " ");
-	}
+ public static void main(String[] args) {
+     int[] arr1 = {1, 2, 3, 4, 5}; 
+     int[] arr2 = Arrays.copyOf(arr1, 5);
+     int[] arr3 = Arrays.copyOf(arr1, 10);
+     for(int i = 0; i < arr2.length; i++) 
+         System.out.print(arr2[i] + " "); 
+      System.out.println();
+     for(int i = 0; i < arr3.length; i++) 
+         System.out.print(arr3[i] + " ");
+ }
 }
 ```
 
@@ -333,8 +314,6 @@ BigInteger b = BigInteger.valueOf(in.nextLong());
 String bin = b.toString(2);
 ```
 
-
-
 #### 十一、日期与时间
 
 ##### 导包
@@ -369,8 +348,6 @@ LocalDateTime localDate = localDate.parse("1998-12-20",dateTimeFormatter).atStar
 Duration duration = Duration.between(localDate,localDateTime);//后减前
 long days = duration.toDays();
 ```
-
-
 
 #### 十二、StreamAPI
 
@@ -409,7 +386,7 @@ Output
 
 ```
 {
-	番木瓜= 1，橙= 1，香蕉= 2，苹果= 3
+ 番木瓜= 1，橙= 1，香蕉= 2，苹果= 3
 }
 ```
 
@@ -444,7 +421,7 @@ Output
 
 ```
 {
-	苹果= 3，香蕉= 2，木瓜= 1，橙= 1
+ 苹果= 3，香蕉= 2，木瓜= 1，橙= 1
 }
 ```
 
@@ -496,12 +473,12 @@ Output
 ```
 // Group by + Count
 {
-	番木瓜= 1，香蕉= 2，苹果= 3，猩猩= 1，西瓜= 1
+ 番木瓜= 1，香蕉= 2，苹果= 3，猩猩= 1，西瓜= 1
 }
 
 // Group by + Sum qty
 {
-	番木瓜= 20，香蕉= 30，苹果= 40，orang = 10，西瓜= 10
+ 番木瓜= 20，香蕉= 30，苹果= 40，orang = 10，西瓜= 10
 }
 ```
 
@@ -523,11 +500,11 @@ public class Java8Examples4 {
                 new Item("banana", 10, new BigDecimal("19.99")),
                 new Item("apple", 20, new BigDecimal("9.99"))
                 );
-		//group by price
+  //group by price
         Map<BigDecimal, List<Item>> groupByPriceMap =
-			items.stream().collect(Collectors.groupingBy(Item::getPrice));
+   items.stream().collect(Collectors.groupingBy(Item::getPrice));
         System.out.println(groupByPriceMap);
-		// group by price, uses 'mapping' to convert List<Item> to Set<String>
+  // group by price, uses 'mapping' to convert List<Item> to Set<String>
         Map<BigDecimal, Set<String>> result =
                 items.stream().collect(
                         Collectors.groupingBy(Item::getPrice,
@@ -543,27 +520,27 @@ Output
 
 ```
 {
-	19.99 = [
-			Item {name ='banana'，qty = 20，price = 19.99}， 
-			Item {name ='banana'，qty = 10，price = 19.99}
-		] 
-	29.99 = [
-			Item {name ='orang'，qty = 10，price = 29.99}， 
-			Item {name ='watermelon'，qty = 10，price = 29.99}
-		] 
-	9.99 = [
-			Item {name ='apple'，qty = 10，price = 9.99}， 
-			Item {name ='papaya'，qty = 20，price = 9.99}， 
-			Item {name ='apple'，qty = 10，price = 9.99}， 
-			Item {name ='apple'，qty = 20，price = 9.99}
-		]
+ 19.99 = [
+   Item {name ='banana'，qty = 20，price = 19.99}， 
+   Item {name ='banana'，qty = 10，price = 19.99}
+  ] 
+ 29.99 = [
+   Item {name ='orang'，qty = 10，price = 29.99}， 
+   Item {name ='watermelon'，qty = 10，price = 29.99}
+  ] 
+ 9.99 = [
+   Item {name ='apple'，qty = 10，price = 9.99}， 
+   Item {name ='papaya'，qty = 20，price = 9.99}， 
+   Item {name ='apple'，qty = 10，price = 9.99}， 
+   Item {name ='apple'，qty = 20，price = 9.99}
+  ]
 }
 
 // group by +映射到Set
 {
-	19.99 = [香蕉] 
-	29.99 = [orang，西瓜]， 
-	9.99 = [番木瓜，苹果]
+ 19.99 = [香蕉] 
+ 29.99 = [orang，西瓜]， 
+ 9.99 = [番木瓜，苹果]
 }
 ```
 
@@ -585,4 +562,3 @@ for (Map.Entry<Integer, Integer> integerIntegerEntry : hashMap.entrySet()) {
 
 }
 ```
-

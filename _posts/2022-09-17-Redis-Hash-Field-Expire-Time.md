@@ -6,6 +6,9 @@ tags: Redis
 excerpt: 讨论Redis-Hash-Field-Expire-Time的可行性及其实现细节，探究其在分布式限流器RateLimiter的最佳实践
 ---
 
+* content
+{:toc}
+
 ### 1.背景
 
 不知道大家有没有用Redis的Hash数据结构来缓存一种类的多个不同对象实体的经历，把不同对象的ID作为Hash的field，对象的JSON序列化字符串作为value。如果这个Hash里面的对象太多，且有部分对象过了一定时间后就不会再被访问到，这个时候我们是不是会想到要给其中某些field（后面暂且称之为子元素吧）给设置过期时间，不然的话，如果Hash里面的对象数量一直增长，将会造成Redis的内存爆炸。所以，怎么给Hash的子元素设置过期时间呢？
@@ -44,7 +47,7 @@ long currentTimeMillis = System.currentTimeMillis();Set<String> expireKeys = red
 
 ### 4.RateLimiter分布式限流器应用实践
 
-Github:https://github.com/oneone1995/blog/issues/13
+Github:<https://github.com/oneone1995/blog/issues/13>
 
 #### 一：简单使用
 
@@ -97,7 +100,7 @@ public class Main {
 rateLimiter.trySetRate(RateType.OVERALL, 1, 1, RateIntervalUnit.SECONDS);
 ```
 
-- 源码
+* 源码
 
   ```java
   redis.call('hsetnx', KEYS[1], 'rate', ARGV[1]);
@@ -108,7 +111,8 @@ rateLimiter.trySetRate(RateType.OVERALL, 1, 1, RateIntervalUnit.SECONDS);
   对应Redis的数据结构：
   ![image-20220917160839053](/assets/img/redis/image-20220917160839053.png)
 
-  - RateType 限流类型 **#type**
+  * RateType 限流类型 **#type**
+
     ```java
     public enum RateType {
     
@@ -125,15 +129,15 @@ rateLimiter.trySetRate(RateType.OVERALL, 1, 1, RateIntervalUnit.SECONDS);
     }
     ```
 
-    	- OVERALL：应用所有Redis实例
+     - OVERALL：应用所有Redis实例
 
-    	- PER_CLIENT：应用单个Redis实例
+     - PER_CLIENT：应用单个Redis实例
 
-  - Rate 最大流速 **#rate**
+  * Rate 最大流速 **#rate**
 
-  - RateInterval 限流频率,单位ms **#interval** 
+  * RateInterval 限流频率,单位ms **#interval**
 
-- 令牌生成
+* 令牌生成
   通过Demo的代码示例点进去，最后可以看到执行lua脚本拿令牌的代码在`org.redisson.RedissonRateLimiter#tryAcquireAsync(org.redisson.client.protocol.RedisCommand<T>, java.lang.Long)`这个方法里，我把它的lua脚本拷出来写了注释
 
   ```lua
@@ -220,6 +224,7 @@ rateLimiter.trySetRate(RateType.OVERALL, 1, 1, RateIntervalUnit.SECONDS);
   然后比较当前令牌桶中令牌的数量，如果足够多就返回了，如果不够多则返回到下一个令牌生产还需要多少时间。这个返回值特别重要。
 
   接下来就是回到java代码，各个API入口点进去，最后都会调到`org.redisson.RedissonRateLimiter#tryAcquireAsync(long, org.redisson.misc.RPromise<java.lang.Boolean>, long)`这个方法。我也拷出来做了简单的注释。
+
   ```java
   private void tryAcquireAsync(long permits, RPromise<Boolean> promise, long timeoutInMillis) {
       long s = System.currentTimeMillis();

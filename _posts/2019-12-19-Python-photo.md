@@ -6,6 +6,9 @@ tags: Python
 excerpt: 互动-利用Python的PIL库拼接照片墙
 ---
 
+* content
+{:toc}
+
 ### PIL 支持的图像文件格式
 
 BMP BUFR (identify only) CUR (read only) DCX (read only) EPS (write-only) FITS (identify only) FLI, FLC (read only) FPX (read only) GBR (read only) GD (read only) GIF GRIB (identify only) HDF5 (identify only) ICO (read only) IM IMT (read only) IPTC/NAA (read only) **JPEG** MCIDAS (read only) MIC (read only) MPEG (identify only) MSP PALM (write only) PCD (read only) PCX PDF (write only) PIXAR (read only) **PNG** PPM PSD (read only) SGI (read only) SPIDER TGA (read only) TIFF WAL (read only) WMF (identify only) XBM XPM (read only) XV Thumbnails

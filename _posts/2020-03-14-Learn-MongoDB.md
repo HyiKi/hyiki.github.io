@@ -6,6 +6,9 @@ tags: [MongoDB,Learning]
 excerpt: Document类型数据库，持续更新的学习笔记。
 ---
 
+* content
+{:toc}
+
 ## 前言
 
 MongoDB 是一个基于分布式文件存储的数据库。由 C++ 语言编写。旨在为 WEB 应用提供可扩展的高性能数据存储解决方案。
@@ -14,13 +17,13 @@ MongoDB 是一个介于关系数据库和非关系数据库之间的产品，是
 
 ## Linux中下载并部署MongoDB
 
-1. 使用Docker部署，对应的仓库https://hub.docker.com/_/mongo
+1. 使用Docker部署，对应的仓库<https://hub.docker.com/_/mongo>
 2. `docker pull mongo`拉取线上仓库的MongoDB镜像
 3. `docker run --name some-mongo -p 27017:27017 -d mongo:tag`将镜像变为容器，其中**some-mongo**为容器名，**tag**为需要创建的版本号
 4. 通过`docker ps`就能看到创建的容器了
 5. `docker exec -it mongodb bash`（默认SHELL)就可以进入我刚刚创建的mongodb容器了
 6. 在容器中输入`mongo admin`以管理员身份进入MongoDB数据库
-7. 下载辅助工具`NoSQLBooster for MongoDB`，https://www.nosqlbooster.com/，利用创建用户的操作得到认证的账号密码
+7. 下载辅助工具`NoSQLBooster for MongoDB`，<https://www.nosqlbooster.com/，利用创建用户的操作得到认证的账号密码>
 
 ### 创建用户
 
@@ -55,7 +58,7 @@ db.auth("root","123")
 
 ### 客户端后台管理工具
 
-1. 首先我们下载Robo 3T(下载地址https://robomongo.org/download)
+1. 首先我们下载Robo 3T(下载地址<https://robomongo.org/download>)
 2. 下载成功之后解压，找到.exe可执行文件双击启动
 3. 启动后新建一个连接，输入ip地址
 4. 连接成功之后，我们就可以看到数据库的信息了
@@ -668,4 +671,3 @@ db.test.find({"y.z":2,"y.k":3})
 ```
 
 这种写法可以任意颠倒顺序。
-

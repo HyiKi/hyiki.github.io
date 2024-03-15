@@ -6,6 +6,8 @@ tags: MongoDB
 excerpt: 横向扩展提高数据库性能的一种环境搭建
 ---
 
+* content
+{:toc}
 
 ## 前言
 
@@ -49,7 +51,7 @@ docker run --name configsvr1 -d mongo --configsvr --replSet "rs_configsvr"  --bi
 docker run --name configsvr2 -d mongo --configsvr --replSet "rs_configsvr"  --bind_ip_all
 ```
 
-### 通过docker inspect 容器名去获取在容器里的ip地址：
+### 通过docker inspect 容器名去获取在容器里的ip地址
 
 ```
 docker inspect configsvr0 | grep IPAddress
@@ -78,11 +80,11 @@ docker inspect configsvr2 | grep IPAddress
 
 由于–configsvr 的默认端口为 27019。所以配置服务的地址为
 
-- configsvr0: 172.17.0.3:27019
-- configsvr1: 172.17.0.6:27019
-- configsvr2: 172.17.0.8:27019
+* configsvr0: 172.17.0.3:27019
+* configsvr1: 172.17.0.6:27019
+* configsvr2: 172.17.0.8:27019
 
-### 初始化配置服务复制集：
+### 初始化配置服务复制集
 
 ```
 docker exec -it configsvr0 bash
@@ -93,15 +95,15 @@ mongo --host 172.17.0.3 --port 27019
 
 ```
 rs.initiate(
-	{
-		_id:"rs_configsvr",
-		configsvr: true,
-		members: [
-			{ _id : 0, host : "172.17.0.3:27019" },
-			{ _id : 1, host : "172.17.0.6:27019" },
-			{ _id : 2, host : "172.17.0.8:27019" }
-		]
-	}
+ {
+  _id:"rs_configsvr",
+  configsvr: true,
+  members: [
+   { _id : 0, host : "172.17.0.3:27019" },
+   { _id : 1, host : "172.17.0.6:27019" },
+   { _id : 2, host : "172.17.0.8:27019" }
+  ]
+ }
 )
 ```
 
@@ -145,7 +147,7 @@ docker run --name shardsvr11 -d mongo --shardsvr --replSet "rs_shardsvr1"  --bin
 docker run --name shardsvr12 -d mongo --shardsvr --replSet "rs_shardsvr1"  --bind_ip_all
 ```
 
-### 通过docker inspect 容器名去获取在容器里的ip地址：
+### 通过docker inspect 容器名去获取在容器里的ip地址
 
 ```
 docker inspect shardsvr00 | grep IPAddress
@@ -191,14 +193,14 @@ docker inspect shardsvr12 | grep IPAddress            "SecondaryIPAddresses": nu
 
 由于–shardsvr 的默认端口为 27018。所以配置服务的地址为
 
-- shardsvr00: 172.17.0.9:27018
-- shardsvr01: 172.17.0.10:27018
-- shardsvr02: 172.17.0.11:27018
-- shardsvr10: 172.17.0.12:27018
-- shardsvr11: 172.17.0.13:27018
-- shardsvr12: 172.17.0.14:27018
+* shardsvr00: 172.17.0.9:27018
+* shardsvr01: 172.17.0.10:27018
+* shardsvr02: 172.17.0.11:27018
+* shardsvr10: 172.17.0.12:27018
+* shardsvr11: 172.17.0.13:27018
+* shardsvr12: 172.17.0.14:27018
 
-### 初始化分片复制集：
+### 初始化分片复制集
 
 ```
 docker exec -it shardsvr00 bash
@@ -209,14 +211,14 @@ mongo --host 172.17.0.9 --port 27018
 
 ```
 rs.initiate(
-	{
-		_id:"rs_shardsvr0",
-		members: [
-			{ _id : 0, host : "172.17.0.9:27018" },
-			{ _id : 1, host : "172.17.0.10:27018" },
-			{ _id : 2, host : "172.17.0.11:27018" }
-		]
-	}
+ {
+  _id:"rs_shardsvr0",
+  members: [
+   { _id : 0, host : "172.17.0.9:27018" },
+   { _id : 1, host : "172.17.0.10:27018" },
+   { _id : 2, host : "172.17.0.11:27018" }
+  ]
+ }
 )
 ```
 
@@ -247,14 +249,14 @@ mongo --host 172.17.0.12 --port 27018
 
 ```
 rs.initiate(
-	{
-		_id:"rs_shardsvr1",
-		members: [
-			{ _id : 0, host : "172.17.0.12:27018" },
-			{ _id : 1, host : "172.17.0.13:27018" },
-			{ _id : 2, host : "172.17.0.14:27018" }
-		]
-	}
+ {
+  _id:"rs_shardsvr1",
+  members: [
+   { _id : 0, host : "172.17.0.12:27018" },
+   { _id : 1, host : "172.17.0.13:27018" },
+   { _id : 2, host : "172.17.0.14:27018" }
+  ]
+ }
 )
 ```
 

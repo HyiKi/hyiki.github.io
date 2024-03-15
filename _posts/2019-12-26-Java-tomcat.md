@@ -6,9 +6,12 @@ tags: Java
 excerpt: IDEA新建Java工程并放线上tomcat运行
 ---
 
+* content
+{:toc}
+
 ### 开发环境
 
-- IntelliJ IDEA 2018.2.4 x64
+* IntelliJ IDEA 2018.2.4 x64
 
 ### New Project
 
@@ -46,10 +49,10 @@ excerpt: IDEA新建Java工程并放线上tomcat运行
         <artifactId>tomcat-embed-jasper</artifactId>
         <scope>provided</scope>
     </dependency>
-	<dependency>
+ <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-	</dependency>
+ </dependency>
 ```
 
 ### Application文件的重载

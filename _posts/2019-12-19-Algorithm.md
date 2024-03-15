@@ -6,12 +6,17 @@ tags: Algorithm
 excerpt: 记录一些有趣的算法，想与你分享。
 ---
 
+* content
+{:toc}
+
 #### merge-sort-list
+
 1. 快慢指针找中点
 2. 递归合并
 3. 归并排序，复杂度O(nlogn)
 
 #### insertion-sort-list
+
 1. 假结点dummy
 
    ```
@@ -25,7 +30,7 @@ excerpt: 记录一些有趣的算法，想与你分享。
 3. 插入node结点到dummy的两结点之间或者是一个结点与空结点之间
 
    ```
-   			while (cur->next && cur->next->val <= head->val) {
+      while (cur->next && cur->next->val <= head->val) {
                    cur = cur->next;
                }
                head->next = cur->next;
@@ -53,9 +58,9 @@ excerpt: 记录一些有趣的算法，想与你分享。
    //或者前一个结点不为空且为自己的左结点或右结点
    //则出栈并输出
    if((tmp->left == nullptr && tmp->right == nullptr)||(pre!=nullptr&&(pre == tmp->left || pre == tmp->right))){
-   	ans.push_back(tmp->val);
-   	pre = tmp;
-   	st.pop();
+    ans.push_back(tmp->val);
+    pre = tmp;
+    st.pop();
    }
    ```
 
@@ -63,10 +68,10 @@ excerpt: 记录一些有趣的算法，想与你分享。
 
    ```
    if(tmp->right!=nullptr){
-   	st.push(tmp->right);
+    st.push(tmp->right);
    }
-   	if(tmp->left!=nullptr){
-   	st.push(tmp->left);
+    if(tmp->left!=nullptr){
+    st.push(tmp->left);
    }
    ```
 
@@ -130,7 +135,7 @@ bool connected(int x,int y){
 }
 ```
 
-####  拓扑排序（判断成环） 
+#### 拓扑排序（判断成环）
 
 ```c++
 bool f(){
@@ -203,8 +208,8 @@ int KMP(char *ptr,char *str,int pp,int ss){
             k++;
             if(k==pp-1){
                 cnt++;
-            	k=next[k];
-        	}
+             k=next[k];
+         }
         }
     }
     return cnt;
@@ -250,8 +255,8 @@ void query(int L,int R,int v=1){
     if(L<=tree[v].lf&&R>=tree[v].rt){
         ans+=tree[v].v;
         return;
-	}
-	pushdown(v);
+ }
+ pushdown(v);
     if(L<=tree[v*2].rt){
         query(L,R,v*2);
     }
@@ -419,4 +424,3 @@ for(int i = 1 ; i < n;i ++) {
     }
 }
 ```
-

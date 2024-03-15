@@ -6,9 +6,8 @@ tags: SQL
 excerpt: 记录会想不起来的SQL用法
 ---
 
-[TOC]
-
----
+* content
+{:toc}
 
 ### 1 offset - 偏移量
 
@@ -139,8 +138,8 @@ sum(case wr.receipt_status when 4 then wrs.batch_num else 0 end)
 
 例如，假设在主实例中已删除表的只读副本上执行长时间运行的 SELECT 语句时，您在主实例上运行了 DROP 语句。然后，只读副本有两个选项：
 
-- 等待 SELECT 语句完成后再应用 WAL 记录。在此情况下，复制滞后会增加。
-- 应用 WAL 记录，然后取消 SELECT 语句。在此情况下，您会收到错误“**由于与恢复冲突而取消语句**”。
+* 等待 SELECT 语句完成后再应用 WAL 记录。在此情况下，复制滞后会增加。
+* 应用 WAL 记录，然后取消 SELECT 语句。在此情况下，您会收到错误“**由于与恢复冲突而取消语句**”。
 
 只读副本根据参数 **[max_standby_streaming_delay](https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-MAX-STANDBY-STREAMING-DELAY)** 和 [**max_standby_archive_delay**](https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-MAX-STANDBY-ARCHIVE-DELAY) 的值来解决这些复制冲突。**max_standby_streaming_delay** 参数确定只读副本在取消与即将应用的 WAL 条目冲突的备用查询之前必须等待多长时间。如果冲突语句在此时间段之后仍在运行，则 PostgreSQL 将取消该语句并发出以下错误消息：
 
@@ -189,10 +188,10 @@ DETAIL: User query might have needed to see row versions that must be removed.
 
 设置这些参数时，请记住以下几点：
 
-- 如果将这些参数的值设置为 -1，则允许副本实例永远等待冲突查询完成，从而增加复制滞后。
-- 如果将这些参数的值设置为 0，则会取消冲突的查询，并将 WAL 条目应用于副本实例。
-- 这些参数的默认值设置为 30 秒。
-- 如果在设置这些参数时未指定单位，则以毫秒为单位。
+* 如果将这些参数的值设置为 -1，则允许副本实例永远等待冲突查询完成，从而增加复制滞后。
+* 如果将这些参数的值设置为 0，则会取消冲突的查询，并将 WAL 条目应用于副本实例。
+* 这些参数的默认值设置为 30 秒。
+* 如果在设置这些参数时未指定单位，则以毫秒为单位。
 
 根据您的使用案例调整这些参数的值，以平衡查询取消或复制滞后。
 
@@ -272,38 +271,39 @@ select count(1) from "order" where 'Bazar' = any (tags)
 
 3. 转换成从SQL语句入手 加工出想要的数据
 
-   - 异常面单的运单号：regexp_extract(regexp_extract(Message, '\w+:物流商响应面单数据为空'), '\w+')
-     regexp_extract(x, regular expression[,  groupid])	提取并返回目标字符串中符合正则表达式的第[groupid]个子串。
-     
-     - 示例日志
+   * 异常面单的运单号：regexp_extract(regexp_extract(Message, '\w+:物流商响应面单数据为空'), '\w+')
+     regexp_extract(x, regular expression[,  groupid]) 提取并返回目标字符串中符合正则表达式的第[groupid]个子串。
+
+     * 示例日志
+
        ```txt
        content: 2023-09-28 11:04:05.949  INFO  10 [TID:N/A]  --- [istics_event_16] .s.p.a.h.c.m.HadesLogisticsEventListener : HadesLogisticsEventListener consume success, messageId: AC0106F000064CF1BD4A8D6BB403A506, tag: LOGISTICS_CREATED_EVENT_TAG, time: 55 ms
        ```
-     
-     - 查询语句
-     
+
+     * 查询语句
+
        括号分组，groupId/index 指定第几个，0代表匹配所有
-     
+
        ```sql
        SELECT regexp_extract(content , '(tag:) (\w+)', 2) as tag
        ```
-     
-     - 结果
-     
+
+     * 结果
+
        ```txt
        LOGISTICS_CREATED_EVENT_TAG
        ```
-     
-     - 场景
-     
+
+     * 场景
+
        使用日志统计每个消息tag的平均耗时
-     
+
        ```sql
        HadesLogisticsEventListener and success | SELECT regexp_extract(content , '(tag:) (\w+)', 2)  as tag  ,avg( CAST((regexp_extract(content, '(time:) (\d+) ms', 2)) as bigint)) as time group by regexp_extract(content , '(tag:) (\w+)', 2)
        ```
-     
+
        结果表格
-     
+
        | tag                                 | time        |
        | ----------------------------------- | ----------- |
        | LOGISTICS_ABNORMAL_PUSH_EVENT_TAG   | 11.77324376 |
@@ -318,14 +318,15 @@ select count(1) from "order" where 'Bazar' = any (tags)
        | LOGISTICS_COD_STATUS_MODIFIED_EVENT | 7.25        |
        | EXCEL_EXPORT_TAG                    | 9.25        |
        | LOAD_CONTAINER_EVENT                | 1.827862874 |
-     
-   - 异常时间（精确到秒）：date_trunc('second', __time__)
+
+   * 异常时间（精确到秒）：date_trunc('second', **time**)
 
    ```sql
    物流商响应面单数据为空* | SELECT date_trunc('second', __time__) as time, regexp_extract(regexp_extract(Message, '\w+:物流商响应面单数据为空'), '\w+') as logistics_number
    ```
 
 4. 查出来的结果发现 重试获取面单会有重复的物流号 因此需要对结果集去重（同一个物流号取最早时间）
+
    ```sql
    物流商响应面单数据为空* | SELECT min(date_trunc('second', __time__)) as time, regexp_extract(regexp_extract(Message, '\w+:物流商响应面单数据为空'), '\w+') as logistics_number group by logistics_number
    ```
@@ -342,49 +343,51 @@ select count(1) from "order" where 'Bazar' = any (tags)
 
 ### 19 JSON 函数和操作符
 
-​	在查询轨迹内容时有这么一个需求："帮我查出节点码是600的时间"，然而轨迹在数据库里存储的格式是jsonb，于是需要用到SQL的json函数操作：http://www.postgres.cn/docs/9.4/functions-json.html
+​ 在查询轨迹内容时有这么一个需求："帮我查出节点码是600的时间"，然而轨迹在数据库里存储的格式是jsonb，于是需要用到SQL的json函数操作：<http://www.postgres.cn/docs/9.4/functions-json.html>
 
 1. 原jsonb形式的轨迹数据
+
    ```sql
    select tracking_desc from logistics_tracking where logistics_number = 'xxx';
    ```
 
    ```json
    {
-   	"item":[
-   		{
-   			"courierTime":"2023-01-06 17:13:05",
-   			"processLocation":"",
-   			"*hyiki*Code":"900",
-   			"courierDesc":"return requested",
-   			"courierCode":"PINSHENG_ND"
-   		},
-   		{
-   			"courierTime":"2023-01-06 11:59:40",
-   			"processLocation":"",
-   			"*hyiki*Code":"650",
-   			"courierDesc":"in transit to next facility in sydney west nsw",
-   			"courierCode":"PINSHENG_ND"
-   		},
-   		{
-   			"courierTime":"2023-01-06 11:49:12",
-   			"processLocation":"melbourne airport vic",
-   			"*hyiki*Code":"600",
-   			"courierDesc":"item processed at facility",
-   			"courierCode":"PINSHENG_ND"
-   		},
-   		{
-   			"courierTime":"2023-01-05 10:37:53",
-   			"processLocation":"airport west vic",
-   			"*hyiki*Code":"600",
-   			"courierDesc":"received by our network",
-   			"courierCode":"PINSHENG_ND"
-   		}
-   	]
+    "item":[
+     {
+      "courierTime":"2023-01-06 17:13:05",
+      "processLocation":"",
+      "*hyiki*Code":"900",
+      "courierDesc":"return requested",
+      "courierCode":"PINSHENG_ND"
+     },
+     {
+      "courierTime":"2023-01-06 11:59:40",
+      "processLocation":"",
+      "*hyiki*Code":"650",
+      "courierDesc":"in transit to next facility in sydney west nsw",
+      "courierCode":"PINSHENG_ND"
+     },
+     {
+      "courierTime":"2023-01-06 11:49:12",
+      "processLocation":"melbourne airport vic",
+      "*hyiki*Code":"600",
+      "courierDesc":"item processed at facility",
+      "courierCode":"PINSHENG_ND"
+     },
+     {
+      "courierTime":"2023-01-05 10:37:53",
+      "processLocation":"airport west vic",
+      "*hyiki*Code":"600",
+      "courierDesc":"received by our network",
+      "courierCode":"PINSHENG_ND"
+     }
+    ]
    }
    ```
 
 2. 分割轨迹中的item数组
+
    ```sql
    select jsonb_array_elements(tracking_desc -> 'item') item
        from logistics_tracking
@@ -419,6 +422,7 @@ select count(1) from "order" where 'Bazar' = any (tags)
    ```
 
 4. 将这张新表命名为T1，这样就可以对轨迹进行数据处理了
+
    ```sql
    with T1 as (select td.item ->> '*hyiki*Code'       *hyiki*_code,
                       td.item ->> 'courierCode'     courier_code,
@@ -439,6 +443,7 @@ select count(1) from "order" where 'Bazar' = any (tags)
    ```
 
 5. 数据处理plus版本
+
    ```sql
    with T1 as (select td.logistic_number,
                       td.item ->> '*hyiki*Code'       *hyiki*_code,
@@ -462,7 +467,6 @@ select count(1) from "order" where 'Bazar' = any (tags)
    where condition
    group by wr.logistic_number;
    ```
-
 
 ---
 
@@ -499,7 +503,8 @@ saveOrUpdate(entity, eq);
 
 ### 21 使用INSERT ON CONFLICT覆盖写入数据 & 伪表excluded
 
-- 前提：初始化一张测试数据表
+* 前提：初始化一张测试数据表
+
   ```sql
   CREATE TABLE t1
   (
@@ -510,15 +515,17 @@ saveOrUpdate(entity, eq);
   );
   ```
 
-- 众所周知，INSERT语句支持多行语句的插入，UPDATE语句支持单行语句的更新。语法如下：
+* 众所周知，INSERT语句支持多行语句的插入，UPDATE语句支持单行语句的更新。语法如下：
 
-  - INSERT
+  * INSERT
+
     ```sql
     INSERT INTO t1
     VALUES (0, 0, 0, 0)
     ```
 
-  - UPDATE
+  * UPDATE
+
     ```sql
     UPDATE t1
     SET b = 1,
@@ -527,9 +534,9 @@ saveOrUpdate(entity, eq);
     WHERE a = 0;
     ```
 
-- 那么在使用postgresql的INSERT ON CONFLICT语法，怎么实现多行语句的 INSERT ON CONFLICT DO UPDATE，这里引入“伪表”的概念
+* 那么在使用postgresql的INSERT ON CONFLICT语法，怎么实现多行语句的 INSERT ON CONFLICT DO UPDATE，这里引入“伪表”的概念
 
-  - 伪表
+  * 伪表
 
     ```sql
     INSERT INTO t1 VALUES (2,2,2,2) ON CONFLICT (a) DO UPDATE SET (b, c, d) = (excluded.b, excluded.c, excluded.d);
@@ -537,16 +544,17 @@ saveOrUpdate(entity, eq);
 
     在DO UPDATE SET子句中，可以使用excluded表示冲突的数据构成的伪表，在主键冲突的情况下，引用伪表中列的值覆盖原来列的值。上述语句中，新插入的数据`(0,2,2,2)`构成了一个伪表，伪表包含1行4列数据，表名为excluded，可以使用`excluded.b, excluded.c, excluded.d`去引用伪表中的列。
 
-  - 满足多行写入的场景
+  * 满足多行写入的场景
 
-    - 执行SQL前：
+    * 执行SQL前：
 
       | a    | b    | c    | d    |
       | :--- | :--- | :--- | :--- |
       | 0    | 0    | 0    | 0    |
       | 2    | 2    | 2    | 2    |
 
-    - 执行SQL：
+    * 执行SQL：
+
       ```sql
       INSERT INTO t1
       VALUES (0, 1, 1, 1),
@@ -555,7 +563,7 @@ saveOrUpdate(entity, eq);
       ON CONFLICT (a) DO UPDATE SET (b, c, d) = (excluded.b, excluded.c, excluded.d);
       ```
 
-    - 执行SQL后：
+    * 执行SQL后：
 
       | a    | b    | c    | d    |
       | :--- | :--- | :--- | :--- |
@@ -567,11 +575,11 @@ saveOrUpdate(entity, eq);
 
 ### 22 WITHIN GROUP
 
-- **作用**：WITHIN GROUP 用于指定在聚合函数中如何处理排序和聚合值，通常与排序的聚合函数一起使用。
+* **作用**：WITHIN GROUP 用于指定在聚合函数中如何处理排序和聚合值，通常与排序的聚合函数一起使用。
 
-- **用法**：在 PostgreSQL 中，WITHIN GROUP 通常与排序的聚合函数一起使用，以指示在给定排序条件下如何计算聚合函数的结果。
+* **用法**：在 PostgreSQL 中，WITHIN GROUP 通常与排序的聚合函数一起使用，以指示在给定排序条件下如何计算聚合函数的结果。
 
-- **示例**：计算中位数时，可以使用 PERCENTILE_CONT 函数，并使用 WITHIN GROUP 来指定排序条件。例如：
+* **示例**：计算中位数时，可以使用 PERCENTILE_CONT 函数，并使用 WITHIN GROUP 来指定排序条件。例如：
 
   ```sql
   SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY column_name) AS median
@@ -582,11 +590,11 @@ saveOrUpdate(entity, eq);
 
 ### 23 ROW_NUMBER() OVER
 
-- **作用**：ROW_NUMBER() OVER 是一种窗口函数，用于为结果集中的行分配唯一的数字序号。
+* **作用**：ROW_NUMBER() OVER 是一种窗口函数，用于为结果集中的行分配唯一的数字序号。
 
-- **用法**：ROW_NUMBER() OVER 可以根据指定的排序条件为每个分组中的行分配一个序号。
+* **用法**：ROW_NUMBER() OVER 可以根据指定的排序条件为每个分组中的行分配一个序号。
 
-- **示例**：为每个部门中工资最高的员工分配排名。例如：
+* **示例**：为每个部门中工资最高的员工分配排名。例如：
 
   ```sql
   SELECT

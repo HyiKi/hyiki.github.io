@@ -6,11 +6,14 @@ tags: [Microservices,RPC,Feign]
 excerpt: 微服务迁移过程
 ---
 
+* content
+{:toc}
+
 1. #### 【调用与响应】
 
    feign（Http远程方法调用）**标准化Response响应体**（这里定为BaseFeignResponse）
 
-   - 用于适配**被调用端**Server的**响应体结构**，使其既能提供RPC的服务也能给前端提供服务
+   * 用于适配**被调用端**Server的**响应体结构**，使其既能提供RPC的服务也能给前端提供服务
 
      ```java
      @Data
@@ -40,7 +43,7 @@ excerpt: 微服务迁移过程
      {"code":"SUCCESS","msg":"success","data":"success"}
      ```
 
-   - 定义好响应体之后，需要通过**切面**Aspect对RestController作**增强处理**：将调用结果转成目标体，并做好空值与异常的自适应
+   * 定义好响应体之后，需要通过**切面**Aspect对RestController作**增强处理**：将调用结果转成目标体，并做好空值与异常的自适应
 
      ```java
      @Aspect
@@ -186,8 +189,8 @@ excerpt: 微服务迁移过程
 
 4. #### 【文件接收】关键点在于将**RPC的输出流**作为输入流，**asInputStream**写入**响应服务的输出流**
 
-   - feign.Response ：An immutable response to an http invocation which only returns string content.
-   - 只返回String内容的响应会视为feign.Response对象：文件下载
+   * feign.Response ：An immutable response to an http invocation which only returns string content.
+   * 只返回String内容的响应会视为feign.Response对象：文件下载
 
    ```java
    /** String -> feign.Response **/
@@ -250,11 +253,11 @@ excerpt: 微服务迁移过程
 
 5. #### 【文件上传】遇到的已知问题：the request was rejected because no multipart boundary was found
 
-   - 分析问题：
+   * 分析问题：
 
-     - StandardMultipartHttpServletRequest#parseRequest -> contentType: multipart/form-data
+     * StandardMultipartHttpServletRequest#parseRequest -> contentType: multipart/form-data
 
-     - FileUploadBase#getBoundary -> return null
+     * FileUploadBase#getBoundary -> return null
 
        ```java
        public byte[] getBoundary(String contentType) {
@@ -271,7 +274,7 @@ excerpt: 微服务迁移过程
        }
        ```
 
-     - FileItemIteratorImpl#init -> throw Exception
+     * FileItemIteratorImpl#init -> throw Exception
 
        ```java
        multiPartBoundary = fileUploadBase.getBoundary(contentType);
@@ -281,9 +284,9 @@ excerpt: 微服务迁移过程
        }
        ```
 
-   - 解决问题：
+   * 解决问题：
 
-     - **@PostMapping**注解属性添加**consumes**类型 & 文件类型前的**@RequestPart** 注解
+     * **@PostMapping**注解属性添加**consumes**类型 & 文件类型前的**@RequestPart** 注解
 
        ```java
        @PostMapping(value = "/upload", consumes = MULTIPART_FORM_DATA_VALUE)
@@ -294,7 +297,7 @@ excerpt: 微服务迁移过程
                                                @RequestParam(value = "sheetName", required = false) List<String> sheetName) throws IOException;
        ```
 
-     - 【注意】值得注意的点是序列化Json作为日志输出时，流相关的属性不能被操作：因此需要作filter处理
+     * 【注意】值得注意的点是序列化Json作为日志输出时，流相关的属性不能被操作：因此需要作filter处理
 
        ```java
        Object[] parameters = pjp.getArgs();
@@ -310,22 +313,22 @@ excerpt: 微服务迁移过程
 
 6. #### 【server端服务关闭】server端为保证服务的稳定，当前服务节点从注册中心内摘除应**先于**Spring容器的关闭
 
-   - 【环境架构】依赖组件：spring-boot + spring-cloud-starter-openfeign + spring-cloud-starter-zookeeper-all
+   * 【环境架构】依赖组件：spring-boot + spring-cloud-starter-openfeign + spring-cloud-starter-zookeeper-all
 
      1. <spring-boot.version>2.4.1</spring-boot.version>
      2. <openfeign.version>3.0.0</openfeign.version>
-        - spring-cloud-openfeign-core:3.0.0
-        - spring-cloud-netflix-ribbon:3.0.0
+        * spring-cloud-openfeign-core:3.0.0
+        * spring-cloud-netflix-ribbon:3.0.0
      3. <zookeeper.version>3.0.0</zookeeper.version>
 
-   - 【背景】服务下线**后于**容器关闭会导致的问题：
+   * 【背景】服务下线**后于**容器关闭会导致的问题：
      请求进来，由于注册中心中还残留节点（未完全下线），**负载均衡会把请求分发给存活的服务节点，但是实际上该节点的容器已经关闭，无法提供正常服务**，最终导致这个请求会被拒绝，从而影响了用户的使用体验。
 
-   - 【目标】**避免请求会被拒绝**，应在容器关闭前将节点从注册中心下线，那么在下线之前容器未完全关闭，服务正常提供，当节点真正下线后，负载均衡不会将请求分发到即将下线的节点时，此时才进行服务容器的关闭，这种做法可以支撑节点**优雅(graceful)**关闭，从而进行维护操作：代码更新发版、单节点的临时维护或事故。
+   * 【目标】**避免请求会被拒绝**，应在容器关闭前将节点从注册中心下线，那么在下线之前容器未完全关闭，服务正常提供，当节点真正下线后，负载均衡不会将请求分发到即将下线的节点时，此时才进行服务容器的关闭，这种做法可以支撑节点**优雅(graceful)**关闭，从而进行维护操作：代码更新发版、单节点的临时维护或事故。
 
-   - 【做法】
+   * 【做法】
 
-     - 【前提】客户端的参数配置——服务节点列表的缓存问题
+     * 【前提】客户端的参数配置——服务节点列表的缓存问题
        值得注意：节点列表缓存间隔**ServerListRefreshInterval**
        换句话说，就是每一个时间间隔，客户端会从注册中心刷新一次服务节点列表；那么在缓存时间内，如果有节点进行下线，ribbon也会通过负载均衡将请求分发到下线节点上，导致出现服务拒绝异常。
 
@@ -347,7 +350,7 @@ excerpt: 微服务迁移过程
          OkToRetryOnAllOperations: false  #是否所有操作都重试
        ```
 
-     - 【事件监听】从Spring容器的事件监听入手：**ApplicationEvent**
+     * 【事件监听】从Spring容器的事件监听入手：**ApplicationEvent**
 
        ```java
        package org.springframework.context;
@@ -368,15 +371,15 @@ excerpt: 微服务迁移过程
        }
        ```
 
-     - 【监听入口】从抽象类**ApplicationEvent**中列出实现@Override
+     * 【监听入口】从抽象类**ApplicationEvent**中列出实现@Override
 
-     - 【注入容器】定义**@Component**组件注入用于事件监听的Bean：示例代码
+     * 【注入容器】定义**@Component**组件注入用于事件监听的Bean：示例代码
 
        ```java
        public class SpringEventListener implements ApplicationListener<E extends ApplicationEvent>, TomcatConnectorCustomizer
        ```
 
-     - 【选择事件】Spring容器常用的事件监听：
+     * 【选择事件】Spring容器常用的事件监听：
 
        ```java
        public abstract class ApplicationContextEvent extends ApplicationEvent
@@ -384,16 +387,16 @@ excerpt: 微服务迁移过程
 
        【**Refreshed 对应 Closed 、Started 对应 Stopped**】
 
-       - **ContextRefreshedEvent**
+       * **ContextRefreshedEvent**
          在**初始化或刷新ApplicationContext**时发布（例如，通过使用ConfigurableApplicationContext接口上的refresh（）方法）。在这里，“已初始化”是指所有Bean都已加载，检测到并激活了后处理器Bean，已预先实例化单例并且可以使用ApplicationContext对象。只要尚未关闭上下文，只要选定的ApplicationContext实际上支持这种“热”刷新，就可以多次触发刷新。例如，XmlWebApplicationContext支持热刷新，但GenericApplicationContext不支持。
-       - **ContextStartedEvent**
+       * **ContextStartedEvent**
          **使用ConfigurableApplicationContext接口上的start（）方法启动ApplicationContex**t时发布。此处，“已启动”表示所有Lifecycle bean都收到一个明确的启动信号。通常，此信号用于在显式停止后重新启动Bean，但也可以用于启动尚未配置为自动启动的组件（例如，尚未在初始化时启动的组件）。
-       - **ContextStoppedEvent**
+       * **ContextStoppedEvent**
          **通过使用ConfigurableApplicationContext接口上的stop（）方法停止ApplicationContext**时发布。在这里，“已停止”表示所有Lifecycle bean都收到一个明确的停止信号。停止的上下文可以通过start（）调用重新启动。
-       - **ContextClosedEvent**
+       * **ContextClosedEvent**
          **通过使用ConfigurableApplicationContext接口上的close（）方法关闭ApplicationContext**时发布。在此，“封闭”表示所有单例Bean都被破坏。封闭的情境到了生命的尽头。无法刷新或重新启动。
 
-     - 【解决方案】容器关闭前从注册中心摘除节点
+     * 【解决方案】容器关闭前从注册中心摘除节点
        实际做法：【重点】借助**ContextClosedEvent**，在Spring容器关闭前摘除注册中心服务节点
 
        ```yaml
@@ -492,9 +495,9 @@ excerpt: 微服务迁移过程
        }
        ```
 
-   ##### 【RequestBody参数顺序】feign限制了参数顺序，RequestBody在前
+##### 【RequestBody参数顺序】feign限制了参数顺序，RequestBody在前
 
-   ##### 【PathVariable使用方式】 PathVariable的value必须写，且path上不能有格式，如(/{id:\\d+})不行，需要(/{id})
+##### 【PathVariable使用方式】 PathVariable的value必须写，且path上不能有格式，如(/{id:\\d+})不行，需要(/{id})
 
 ```java
 /* Feign Client Service */
@@ -504,7 +507,7 @@ excerpt: 微服务迁移过程
 BaseFeignResponse<ActionEnum> update(@RequestBody @Valid RuleSaveOrUpdateDto ruleDto, @PathVariable("id") Long id);
 ```
 
-##### 	1. 【GET请求格式】feign如果不标识@RequestParam注解，即使指定了GET方法，feign依然会以POST方法发送请求
+##### 1. 【GET请求格式】feign如果不标识@RequestParam注解，即使指定了GET方法，feign依然会以POST方法发送请求
 
 ```java
 /* Feign Client Service */
@@ -513,7 +516,7 @@ BaseFeignResponse<ActionEnum> update(@RequestBody @Valid RuleSaveOrUpdateDto rul
 BaseFeignResponse<LogisticsNumberDTO> refreshLogisticsTracking(@RequestParam("logisticsNumber") String logisticsNumber);
 ```
 
-​	2. 【@RequestBody报错】已知POST请求进行对象的传递，需要在传递的对象类前加@RequestBody注解
+​ 2. 【@RequestBody报错】已知POST请求进行对象的传递，需要在传递的对象类前加@RequestBody注解
 
 ```java
 /* Feign Client Service */
@@ -529,9 +532,9 @@ Caused by: java.lang.IllegalStateException: Method has too many Body parameters:
 
 解决方式：
 
-- 使用@RequestParam代替@RequestBody，在某些地方是能够实现的，具体还得看状况对象
+* 使用@RequestParam代替@RequestBody，在某些地方是能够实现的，具体还得看状况对象
 
-- 【不推荐】将接收参数定义为Map<String, Object>，而后使用map转object工具，转换成须要的对象。
+* 【不推荐】将接收参数定义为Map<String, Object>，而后使用map转object工具，转换成须要的对象。
 
 7. #### fastxml解析会用xml的解析？？？FeignConfig配置fastjson解析
 
@@ -570,8 +573,8 @@ Caused by: java.lang.IllegalStateException: Method has too many Body parameters:
 
 8. ##### Springboot-maven引入其他模块无法扫描到spring bean的问题（遇到过新建rpc模块无法扫描@FeignClient）
 
-   - 解决方法：将A模块和B模块的Application置于相同路径下，例如com.xx下
-   - 启动模块的包路径在com.*hyiki*.hades.***,新建模块的代码也需要放在这个路径下
+   * 解决方法：将A模块和B模块的Application置于相同路径下，例如com.xx下
+   * 启动模块的包路径在com.*hyiki*.hades.***,新建模块的代码也需要放在这个路径下
 
 9. **rpc 请求过程中使用DTO作为Get请求的参数需要在RPC Client类中，打上@SpringQueryMap注解**
 
@@ -583,9 +586,10 @@ Caused by: java.lang.IllegalStateException: Method has too many Body parameters:
    PageResponse<SkuCostLogListVO> listSkuCostLog(@SpringQueryMap SkuCostLogQuery query);
    ```
 
-   - SpringQueryMap没有生效？
+   * SpringQueryMap没有生效？
 
-     - 配置请求端的Fegin，加强SpringQueryMap解析
+     * 配置请求端的Fegin，加强SpringQueryMap解析
+
        ```java
        @Configuration
        public class FeignConfiguration {
@@ -598,38 +602,40 @@ Caused by: java.lang.IllegalStateException: Method has too many Body parameters:
        }
        ```
 
-     - 使用Fegin加载该配置
+     * 使用Fegin加载该配置
+
        ```java
        @FeignClient(value = "test", configuration = FeignConfiguration.class)
        ```
 
-     - 附带项目的FeignConfiguration
+     * 附带项目的FeignConfiguration
+
        ```java
        @Slf4j
        public class DionysusAdminClientConfiguration extends AbstractFeignClientConfiguration {
        
-       	@Value("${inner.gateway.dionysus-admin.signatureName}")
-       	private String sign;
+        @Value("${inner.gateway.dionysus-admin.signatureName}")
+        private String sign;
        
-       	@Override
-       	public String getSignatureName() {
-       		return sign;
-       	}
+        @Override
+        public String getSignatureName() {
+         return sign;
+        }
        
-       	@Bean
-       	Logger.Level feignLogger() {
-       		return Logger.Level.FULL;
-       	}
+        @Bean
+        Logger.Level feignLogger() {
+         return Logger.Level.FULL;
+        }
        
-       	@Bean
-       	public ErrorDecoder errorDecoder() {
-       		return new RpcCommonConfig.ErrorDecoder();
-       	}
+        @Bean
+        public ErrorDecoder errorDecoder() {
+         return new RpcCommonConfig.ErrorDecoder();
+        }
        
-       	@Bean
-       	public Feign.Builder feignBuilder() {
-       		return Feign.builder().queryMapEncoder(new BeanQueryMapEncoder());
-       	}
+        @Bean
+        public Feign.Builder feignBuilder() {
+         return Feign.builder().queryMapEncoder(new BeanQueryMapEncoder());
+        }
        }
        ```
 
@@ -643,8 +649,6 @@ Caused by: java.lang.IllegalStateException: Method has too many Body parameters:
    @ResponseBody
    public Map<Long, BigDecimal> listCargoCostMapInTheSameWarehouse(@NotNull(message = "仓库必传") long warehouseId,
    @NotNull(message = "skuId必传") @RequestParam List<Long> skuIds) {
-   	return skuCostQueryApplicationService.listCargoCostMapInTheSameWarehouse(warehouseId, skuIds);
+    return skuCostQueryApplicationService.listCargoCostMapInTheSameWarehouse(warehouseId, skuIds);
    }
    ```
-
-   

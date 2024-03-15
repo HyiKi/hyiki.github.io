@@ -6,6 +6,9 @@ tags: [Developer_Tools,Java]
 excerpt: IDEA利用MyBatis Plugins插件自动生成配置
 ---
 
+* content
+{:toc}
+
 ### MyBatis-plus 安装
 
 1. 依次进入`File`-`Setting`-`Plugins`
@@ -89,7 +92,7 @@ excerpt: IDEA利用MyBatis Plugins插件自动生成配置
 
 ### generatorConfig.xml报错处理
 
-"http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd"报红报错
+"<http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd"报红报错>
 
 `file`–>`setting`–>`languages & frameworks`–>`Schemas and DTDs`->`Ignored Schemas and DTDs`
 
@@ -97,7 +100,7 @@ excerpt: IDEA利用MyBatis Plugins插件自动生成配置
 
 ### 下载数据库驱动包并更换路径
 
-1. “https://dev.mysql.com/downloads/connector/j/”官网下载地址
+1. “<https://dev.mysql.com/downloads/connector/j/”官网下载地址>
 2. 建议选择以前的驱动版本5.1.*
 3. Select Operating System:Platform Independent
 4. Download ->**Platform Independent (Architecture Independent), ZIP Archive**

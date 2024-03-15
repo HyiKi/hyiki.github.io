@@ -6,6 +6,9 @@ tags: Python
 excerpt: Python网页爬取图片实例
 ---
 
+* content
+{:toc}
+
 ### 爬取步骤
 
 1. 定位需要爬取的网页
@@ -18,7 +21,7 @@ excerpt: Python网页爬取图片实例
 import urllib.request
 import re
 
-url = ''	#需要爬取的网页
+url = '' #需要爬取的网页
 request = urllib.request.Request(url)
 response = urllib.request.urlopen(request)
 buf = response.read()
@@ -30,7 +33,7 @@ print(listurl)
 
 i = 1
 for url in listurl:
-    f = open(str(i) + '.jpg', 'wb+')	#设置保存的文件名
+    f = open(str(i) + '.jpg', 'wb+') #设置保存的文件名
     req = urllib.request.urlopen(url)
     buf = req.read()
     f.write(buf)
@@ -78,8 +81,6 @@ mkpath = "d:\\root\\"
 # 调用函数
 mkdir(mkpath)
 ```
-
-
 
 ##### 匹配变量
 

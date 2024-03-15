@@ -6,7 +6,8 @@ tags: [docker]
 excerpt: 自动构建镜像必读的 Dockerfile 指令中文手册
 ---
 
-[TOC]
+* content
+{:toc}
 
 # Dockerfile 中文手册
 
@@ -32,14 +33,14 @@ FROM alpine:latest
 
 2. 自定义dockerfile
 
-   - 编辑dockerfile
+   * 编辑dockerfile
 
    ```shell
    cd mydocker
    vim dockerfile
    ```
 
-   - 保存dockerfile
+   * 保存dockerfile
 
    ```dockerfile
    FROM alpine
@@ -142,8 +143,8 @@ RUN apt-get update && \
 `apt-get purge -y --auto-remove`和`apt-get clean`是两个用于清理APT包管理系统的命令，它们在Docker镜像构建过程中有不同的用途。
 
 1. `apt-get purge -y --auto-remove`命令用于完全删除指定的软件包及其相关依赖项。它的选项含义如下：
-   - `-y`：自动回答"yes"，无需手动确认删除操作。
-   - `--auto-remove`：自动移除不再需要的依赖项。
+   * `-y`：自动回答"yes"，无需手动确认删除操作。
+   * `--auto-remove`：自动移除不再需要的依赖项。
 
    此命令适用于在构建镜像时需要删除不再需要的软件包和其依赖项的情况。它会彻底清理掉指定软件包及其相关的文件和配置。
 
@@ -577,4 +578,3 @@ RUN pwd
 使用`WORKDIR`命令可以简化后续命令的路径操作，使得在Dockerfile中的命令更加清晰和易读。
 
 总结来说，`WORKDIR`命令用于设置容器中的工作目录，即在后续的命令中执行命令和操作的基准路径。它可以简化路径操作，并提高Dockerfile的可读性。
-

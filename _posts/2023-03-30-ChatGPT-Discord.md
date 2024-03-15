@@ -6,13 +6,16 @@ tags: AIGC
 excerpt: AI提升生产力
 ---
 
+* content
+{:toc}
+
 **需求：自定义调教ChatGPT，并集成Discord聊天室server实现Chat Bot，满足日常工作生活需求**
 
 ### ChatGPT集成Discord基本步骤
 
 1. 创建Discord Bot账号
 
-要将ChatGPT集成到Discord，您需要创建一个Discord Bot账号。在Discord开发者门户网站（https://discord.com/developers/applications）上创建一个新应用程序，然后将其转换为Bot账号。
+要将ChatGPT集成到Discord，您需要创建一个Discord Bot账号。在Discord开发者门户网站（<https://discord.com/developers/applications）上创建一个新应用程序，然后将其转换为Bot账号。>
 
 2. 获取Bot账号的Token
 
@@ -81,7 +84,7 @@ python bot.py
 
 ### 启动遇到的错误
 
-**aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discord.com:443 ssl:default** 
+**aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discord.com:443 ssl:default**
 
 1. 排查网络问题 ping discord.com
 
@@ -99,6 +102,7 @@ python bot.py
    ```
 
 2. HTTP请求 curl -vv discord.com
+
    ```sh
    (base) wanghaoxuan@wanghaoxuandeMacBook-Pro ~ % curl -vv discord.com 
    * Could not resolve host: discord.com
@@ -107,12 +111,14 @@ python bot.py
    ```
 
 3. 设置proxy代理
+
    ```sh
    export http_proxy=http://localhost:8001
    export https_proxy=http://localhost:8001
    ```
 
 4. 确认网络连接畅通
+
    ```sh
    (base) wanghaoxuan@wanghaoxuandeMacBook-Pro ~ % curl -vv https://www.discord.com
    * Uses proxy env variable https_proxy == 'http://localhost:8001'
@@ -182,6 +188,7 @@ client.run(TOKEN)
 ```
 
 执行结果，且能够正常接收信息
+
 ```
 (base) wanghaoxuan@wanghaoxuandeMacBook-Pro chatgpt % python bot.py
 2023-03-23 11:56:14 INFO     discord.client logging in using static token
@@ -199,34 +206,34 @@ $chat can you give me some suggestions on my lunch? has received!
 ### 后续玩法
 
 1. 支持上下文
-2. 调教Chat Bot https://github.com/PlexPt/awesome-chatgpt-prompts-zh
+2. 调教Chat Bot <https://github.com/PlexPt/awesome-chatgpt-prompts-zh>
 
 ### 近期AI
 
 1. OpenAI 系列
 
-   https://openai.com/
+   <https://openai.com/>
 
-2. Bing AI 系列 
+2. Bing AI 系列
 
-   https://www.bing.com/new
+   <https://www.bing.com/new>
 
 3. midjourney 生成高精度图片，包含文->图，图->图的能力
 
-   https://www.midjourney.com/
+   <https://www.midjourney.com/>
 
 4. google bard
 
-   https://bard.google.com/
+   <https://bard.google.com/>
 
 5. 文心一言
 
-   https://yiyan.baidu.com/
+   <https://yiyan.baidu.com/>
 
 6. Stable Diffusion 文->图 | 图->图
 
-   https://stablediffusionweb.com/
+   <https://stablediffusionweb.com/>
 
 7. DreamBooth 基础图->文字描述图
 
-   https://dreambooth.github.io/
+   <https://dreambooth.github.io/>

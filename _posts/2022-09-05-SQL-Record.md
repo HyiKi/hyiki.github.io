@@ -19,11 +19,15 @@ SELECT DISTINCT Salary
     OFFSET 1
 ```
 
+---
+
 ### 2 IFNULL - 判空，类似getOrDefault用法
 
 ```
 IFNULL(expression,alt_value)
 ```
+
+---
 
 ### 3 SET - 存储过程设值
 
@@ -32,11 +36,15 @@ BEGIN
     SET N := N-1;
 ```
 
+---
+
 ### 4 @ - 查询变量赋值
 
 ```
 @age:=18
 ```
+
+---
 
 ### 5 rank - 排名系列函数
 
@@ -47,6 +55,8 @@ ROW_NUMBER() # 递增
 NTILE(n) over(ORDER BY XX DESC) # 按顺序平均分组排名
 ```
 
+---
+
 ### 6 去重筛选第一条
 
 ```sql
@@ -55,6 +65,8 @@ NTILE(n) over(ORDER BY XX DESC) # 按顺序平均分组排名
 -- 子查询 多行记录查询取一条,拿到想要的id直接 join 联表查询
 select logistics_number, max(id) from ... group by logistics_number
 ```
+
+---
 
 ### 7 分析SQL
 
@@ -67,12 +79,16 @@ explain analyze [SQL]
 explain (ANALYSE,BUFFERS)
 ```
 
+---
+
 ### 8 索引使用情况
 
 ```sql
 -- 查询使用情况
 select * from pg_stat_all_indexes where schemaname = 'schema' and relname = 'table';
 ```
+
+---
 
 ### 9 查询分片
 
@@ -81,6 +97,8 @@ select * from pg_stat_all_indexes where schemaname = 'schema' and relname = 'tab
     and mod(lt.id, #{shardTotal}) = #{shardIndex}
 </if>
 ```
+
+---
 
 ### 10 Insert Conflict Update Return
 
@@ -99,6 +117,8 @@ select * from pg_stat_all_indexes where schemaname = 'schema' and relname = 'tab
 </insert>
 ```
 
+---
+
 ### 11 PG数据库配置查询
 
 ```sql
@@ -116,6 +136,8 @@ set default_transaction_isolation = 'read committed';
 select version();
 ```
 
+---
+
 ### 12 COUNT（条件）
 
 ```sql
@@ -123,6 +145,8 @@ select version();
 select count(tmd.*hyiki*_code = 1 OR NULL)
 // ...
 ```
+
+---
 
 ### 13 SUM （条件）
 
@@ -256,7 +280,7 @@ select count(1) from "order" where 'Bazar' = any (tags)
 
 ---
 
-### 18 从阿里云日志搜索服务学 MySQL
+### 18 从阿里云日志搜索服务学 SQL：regexp_extract 正则切分指定格式字符串
 
 服务在日常运行过程中，发生线上异常我们的第一反应是去看线上日志，首先这要求我们开发过程中要养成在业务操作上打印有效的日志，其次我们还要具备从日志信息中排查线上异常的能力，这次我要介绍的是从阿里云日志中快速查出关键信息的小技巧：
 
@@ -343,7 +367,7 @@ select count(1) from "order" where 'Bazar' = any (tags)
 
 ### 19 JSON 函数和操作符
 
-​ 在查询轨迹内容时有这么一个需求："帮我查出节点码是600的时间"，然而轨迹在数据库里存储的格式是jsonb，于是需要用到SQL的json函数操作：<http://www.postgres.cn/docs/9.4/functions-json.html>
+在查询轨迹内容时有这么一个需求："帮我查出节点码是600的时间"，然而轨迹在数据库里存储的格式是jsonb，于是需要用到SQL的json函数操作：<http://www.postgres.cn/docs/9.4/functions-json.html>
 
 1. 原jsonb形式的轨迹数据
 
@@ -497,7 +521,22 @@ saveOrUpdate(entity, eq);
 ```
 
 分析：
-在同一个事务里，先按照指定的查询条件更新，如果更新的条数为0，再执行插入entity的动作。
+
+1. 在同一个事务里，先按照指定的查询条件更新
+
+   ```sql
+   UPDATE business_data SET business_type=?, business_id=?, name=?, value=? WHERE (business_type = ? AND business_id = ? AND name = ?)
+   ```
+
+2. 如果更新的条数为0
+   ```sql
+   <==    Updates: 0
+   ```
+
+3. 再执行插入entity的动作
+   ```sql
+   INSERT INTO business_data ( business_type, business_id, name, value ) VALUES ( ?, ?, ?, ? )
+   ```
 
 ---
 
@@ -604,3 +643,81 @@ saveOrUpdate(entity, eq);
       ROW_NUMBER() OVER (PARTITION BY department_id ORDER BY salary DESC) AS rank
   FROM employees;
   ```
+
+---
+
+### 24 查询SQL锁日志，排查慢SQL疑难杂症
+
+- **作用**：查询详细的SQL执行情况，以及锁获取情况
+
+- **用法**：
+
+  ```sql
+  with
+   t_wait as
+   (
+   select a.mode,a.locktype,a.database,a.relation,a.page,a.tuple,a.classid,a.granted,
+    a.objid,a.objsubid,a.pid,a.virtualtransaction,a.virtualxid,a.transactionid,a.fastpath,
+    b.state,b.query,b.xact_start,b.query_start,b.usename,b.datname,b.client_addr,b.client_port,b.application_name
+   from pg_locks a,pg_stat_activity b where a.pid=b.pid and not a.granted
+   ),
+   t_run as
+   (
+   select a.mode,a.locktype,a.database,a.relation,a.page,a.tuple,a.classid,a.granted,
+    a.objid,a.objsubid,a.pid,a.virtualtransaction,a.virtualxid,a.transactionid,a.fastpath,
+    b.state,b.query,b.xact_start,b.query_start,b.usename,b.datname,b.client_addr,b.client_port,b.application_name
+   from pg_locks a,pg_stat_activity b where a.pid=b.pid and a.granted
+   ),
+   t_overlap as
+   (
+   select r.* from t_wait w join t_run r on
+    (
+    r.locktype is not distinct from w.locktype and
+    r.database is not distinct from w.database and
+    r.relation is not distinct from w.relation and
+    r.page is not distinct from w.page and
+    r.tuple is not distinct from w.tuple and
+    r.virtualxid is not distinct from w.virtualxid and
+    r.transactionid is not distinct from w.transactionid and
+    r.classid is not distinct from w.classid and
+    r.objid is not distinct from w.objid and
+    r.objsubid is not distinct from w.objsubid and
+    r.pid <> w.pid
+    )
+   ),
+   t_unionall as
+   (
+   select r.* from t_overlap r
+   union all
+   select w.* from t_wait w
+   )
+   select locktype,datname,relation::regclass,page,tuple,virtualxid,transactionid::text,classid::regclass,objid,objsubid,
+    string_agg(
+     'Pid: '||case when pid is null then 'NULL' else pid::text end||chr(10)||
+     'Lock_Granted: '||case when granted is null then 'NULL' else granted::text end||' , Mode: '||case when mode is null then 'NULL' else mode::text end||' , FastPath: '||case when fastpath is null then 'NULL' else fastpath::text end||' , VirtualTransaction: '||case when virtualtransaction is null then 'NULL' else virtualtransaction::text end||' , Session_State: '||case when state is null then 'NULL' else state::text end||chr(10)||
+     'Username: '||case when usename is null then 'NULL' else usename::text end||' , Database: '||case when datname is null then 'NULL' else datname::text end||' , Client_Addr: '||case when client_addr is null then 'NULL' else client_addr::text end||' , Client_Port: '||case when client_port is null then 'NULL' else client_port::text end||' , Application_Name: '||case when application_name is null then 'NULL' else application_name::text end||chr(10)||
+     'Xact_Start: '||case when xact_start is null then 'NULL' else xact_start::text end||' , Query_Start: '||case when query_start is null then 'NULL' else query_start::text end||' , Xact_Elapse: '||case when (now()-xact_start) is null then 'NULL' else (now()-xact_start)::text end||' , Query_Elapse: '||case when (now()-query_start) is null then 'NULL' else (now()-query_start)::text end||chr(10)||
+     'SQL (Current SQL in Transaction): '||chr(10)||
+     case when query is null then 'NULL' else query::text end,
+     chr(10)||'--------'||chr(10)
+    order by
+     ( case mode
+     when 'INVALID' then 0
+     when 'AccessShareLock' then 1
+     when 'RowShareLock' then 2
+     when 'RowExclusiveLock' then 3
+     when 'ShareUpdateExclusiveLock' then 4
+     when 'ShareLock' then 5
+     when 'ShareRowExclusiveLock' then 6
+     when 'ExclusiveLock' then 7
+     when 'AccessExclusiveLock' then 8
+     else 0
+     end  ) desc,
+     (case when granted then 0 else 1 end)
+    ) as lock_conflict
+   from t_unionall
+   group by
+    locktype,datname,relation,page,tuple,virtualxid,transactionid::text,classid,objid,objsubid ;
+  ```
+
+  

@@ -207,7 +207,7 @@ RUN apt-get update && \
 
 需要注意的是，`CMD`命令不会立即执行，而是在容器启动时才执行。它提供了容器的默认行为，但可以通过在`docker run`命令中附加参数来覆盖默认行为。例如，可以使用`docker run`命令的`--entrypoint`参数来指定在容器启动时要执行的命令，覆盖`CMD`命令。
 
-### LABEL
+### LABEL 标签
 
 `LABEL`命令是Dockerfile中的一个指令，用于为镜像添加元数据标签。这些标签提供了关于镜像的描述性信息，如版本号、维护者、描述、发布日期等。标签可以用于组织和管理镜像，也可以在运行容器时提供额外的信息。
 
@@ -501,7 +501,7 @@ docker run -v /host/data:/data myimage
 
 总结来说，`VOLUME`命令用于在Docker容器中创建挂载点，用于持久化存储数据。在运行容器时，可以使用`-v`选项将本地目录或文件与挂载点进行绑定，实现数据的共享和持久化。从而保证了容器存储层的无状态化。
 
-### USER
+### USER 操作用户（组）
 
 `USER`命令是Dockerfile中的一个指令，用于指定在容器中运行命令和操作的用户或用户组。
 
@@ -543,7 +543,7 @@ RUN whoami
 
 总结来说，`USER`命令用于指定在容器中运行命令和操作的用户或用户组。它可以切换到已存在的用户和用户组，也可以切换到通过其他命令在Dockerfile中创建的用户和用户组。
 
-### WORKDIR
+### WORKDIR 工作目录
 
 `WORKDIR`命令是Dockerfile中的一个指令，用于设置容器中的工作目录（工作路径）。
 
@@ -578,3 +578,101 @@ RUN pwd
 使用`WORKDIR`命令可以简化后续命令的路径操作，使得在Dockerfile中的命令更加清晰和易读。
 
 总结来说，`WORKDIR`命令用于设置容器中的工作目录，即在后续的命令中执行命令和操作的基准路径。它可以简化路径操作，并提高Dockerfile的可读性。
+
+### HEALTHCHECK 健康检查
+
+`HEALTHCHECK`是Dockerfile中的一个指令，用于定义容器的健康检查机制。健康检查可以帮助Docker监控容器的运行状况，并在容器出现故障或不正常时采取相应的措施。
+
+`HEALTHCHECK`指令的语法如下：
+
+```dockerfile
+HEALTHCHECK [OPTIONS] CMD <command>
+```
+
+其中，`OPTIONS`包括以下几种：
+
+- `--interval=<duration>`：指定健康检查的间隔时间，默认为30秒。
+- `--timeout=<duration>`：指定健康检查命令的超时时间，默认为30秒。
+- `--start-period=<duration>`：指定容器启动后第一次健康检查的等待时间，默认为0秒。
+- `--retries=<number>`：指定在健康检查失败后重试的次数，默认为3次。
+
+`<command>`是用于执行健康检查的命令，可以是任何能够返回0表示成功或非0表示失败的命令或脚本。
+
+示例：
+
+```dockerfile
+HEALTHCHECK --interval=5s --timeout=3s \
+  CMD curl -f http://localhost/ || exit 1
+```
+
+上述示例定义了一个健康检查，每5秒执行一次，超时时间为3秒。健康检查命令使用`curl`命令检查容器内部的`http://localhost/`服务是否可访问，如果访问失败则返回1。
+
+在运行容器时，可以使用`docker run`命令的`--health-cmd`和`--health-interval`等选项来覆盖`HEALTHCHECK`指令中定义的健康检查设置。
+
+示例：
+
+```bash
+docker run --health-cmd="curl -f http://localhost/ || exit 1" --health-interval=5s my_container
+```
+
+通过定义健康检查，Docker可以定期检查容器的运行状况，并根据检查结果来决定容器的健康状态。这有助于自动化监控和管理容器，提高容器化应用程序的稳定性和可靠性。
+
+总结来说，`HEALTHCHECK`指令用于定义容器的健康检查机制，可以定期检查容器的运行状况，并根据检查结果来确定容器的健康状态。
+
+### ONBUILD 基础镜像指令，派生镜像执行
+
+`ONBUILD`是Dockerfile中的一个指令，用于定义在派生镜像中延迟执行的构建操作。
+
+当一个镜像被用作另一个镜像的基础镜像时，`ONBUILD`指令中的构建操作将被延迟执行，直到派生镜像被构建时才会执行。
+
+`ONBUILD`指令的语法如下：
+
+```dockerfile
+ONBUILD <instruction>
+```
+
+其中，`<instruction>`可以是任意有效的Dockerfile指令，例如`RUN`、`COPY`、`CMD`等。
+
+示例：
+
+```dockerfile
+ONBUILD COPY . /app
+```
+
+上述示例定义了一个`ONBUILD`指令，它将在派生镜像构建过程中执行`COPY . /app`操作。
+
+当使用这个包含`ONBUILD`指令的基础镜像来构建派生镜像时，`COPY . /app`操作将被延迟执行，直到派生镜像被构建时才会执行。
+
+派生镜像的构建过程中可以有多个`ONBUILD`指令，它们将按照在基础镜像中的顺序执行。
+
+`ONBUILD`指令通常用于创建可重用的基础镜像，以便其他开发人员或团队可以基于这些镜像来构建自己的镜像，并在派生镜像中添加特定的构建操作。
+
+需要注意的是，`ONBUILD`指令在Docker 17.06及更高版本中被标记为"deprecated"，并不推荐在新的Dockerfile中使用。官方建议使用更可控的构建过程，例如使用脚本或多阶段构建来实现类似的功能。
+
+总结来说，`ONBUILD`指令用于定义在派生镜像中延迟执行的构建操作。它在基础镜像中定义，当派生镜像被构建时才会执行。然而，官方不推荐在新的Dockerfile中使用`ONBUILD`指令，而是建议使用更可控的构建过程。
+
+### SHELL 环境命令
+
+`SHELL`是Dockerfile中的一个指令，用于指定Dockerfile中后续命令的默认shell。默认情况下，Dockerfile中的命令会使用`/bin/sh -c`来执行。通过`SHELL`指令，你可以指定使用不同的shell来执行后续的命令。
+
+`SHELL`指令的语法如下：
+
+```dockerfile
+SHELL ["executable", "parameters"]
+```
+
+其中，`executable`是要使用的shell可执行文件，`parameters`是传递给shell的参数。
+
+示例：
+
+```dockerfile
+SHELL ["/bin/bash", "-c"]
+```
+
+上述示例指定了后续Dockerfile中的命令将使用`/bin/bash -c`来执行，而不是默认的`/bin/sh -c`。
+
+通过使用`SHELL`指令，你可以选择使用不同的shell来执行Dockerfile中的命令，这有助于在构建镜像时使用更熟悉或更适合的shell环境。
+
+需要注意的是，`SHELL`指令必须在Dockerfile中的其他指令之前声明，且只能出现一次。如果在Dockerfile中多次使用`SHELL`指令，只有最后一个指定的shell会生效。
+
+总结来说，`SHELL`指令用于指定Dockerfile中后续命令的默认shell。通过指定不同的shell，你可以在构建镜像时选择使用更适合的shell环境。

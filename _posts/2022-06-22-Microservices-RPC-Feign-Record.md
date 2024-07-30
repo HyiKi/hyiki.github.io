@@ -604,20 +604,20 @@ PageResponse<SkuCostLogListVO> listSkuCostLog(@SpringQueryMap SkuCostLogQuery qu
   * 使用Fegin加载该配置
 
     ```java
-    @FeignClient(value = "test", configuration = FeignConfiguration.class)
+    @FeignClient(value = "test", configuration = FeignClientConfiguration.class)
     ```
 
   * 附带项目的FeignConfiguration
 
     ```java
     @Slf4j
-    public class DionysusAdminClientConfiguration extends AbstractFeignClientConfiguration {
+    public class FeignClientConfiguration extends AbstractFeignClientConfiguration {
     
-     @Value("${inner.gateway.dionysus-admin.signatureName}")
+     @Value("xxx")
      private String sign;
     
      @Override
-     public String getSignatureName() {
+     public String getSignature() {
       return sign;
      }
     
@@ -635,6 +635,29 @@ PageResponse<SkuCostLogListVO> listSkuCostLog(@SpringQueryMap SkuCostLogQuery qu
      public Feign.Builder feignBuilder() {
       return Feign.builder().queryMapEncoder(new BeanQueryMapEncoder());
      }
+    }
+    ```
+  
+  - context设置对象头 & 签名等等
+  
+    ```java
+    @Data
+    public abstract class AbstractFeignClientConfiguration implements RequestInterceptor {
+    
+    	@Override
+    	public void apply(RequestTemplate template) {
+    		String pathMd5 = DigestUtils.md5DigestAsHex(Base64.getEncoder().encode(getURL(template).getBytes()));
+    		template.header("sign", getSignature())
+    				.header(URL_NAME, pathMd5);
+    	}
+    
+    
+    	public String getURL(RequestTemplate template) {
+    		// URL拼接规则
+    	}
+    
+    	public abstract String getSignature();
+    
     }
     ```
 
@@ -667,3 +690,7 @@ OKHttp	支持连接池
 2. Feign性能优化思路
 使用支持连接池的 HTTP 客户端代替默认的 URLConnection 。
 日志级别设置为 BASIC 或 NONE 。
+
+### 【集成 openfeign 报错】Consider defining a bean of type 'org.springframework.cloud.openfeign.FeignContext' in your configuration
+
+ApplicationStarter启动类加上 `@EnableFeignClients` & `@ImportAutoConfiguration({FeignAutoConfiguration.class})`注解即可解决

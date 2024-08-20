@@ -1,9 +1,9 @@
 ---
 title: 宝藏网站收集
 date:  2024-08-20 20:30:00 +0800
-category: Reference
-tags: [SYSTEM DESIGN]
-excerpt: 沉浸在每天的开发工作，会错过很多遇到的宝藏，来不及收集有趣好用的网站，接下来这里会对场景解决、开发提效、技术咨询等等有帮助的分类收纳
+category: Original
+tags: [Collection]
+excerpt: 沉浸在每天的开发工作，会错过很多遇到的宝藏，来不及收集有趣好用的网站，接下来这里会对场景解决、开发提效、技术资讯等等有帮助的分类收纳
 ---
 
 * content

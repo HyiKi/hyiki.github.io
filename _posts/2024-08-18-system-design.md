@@ -153,3 +153,33 @@ CAP定理是系统设计领域中的一个基本定理。它指出分布式系�
 > RAID 1技术：镜像
 >
 > **适用场景**：数据冗余提高数据的安全性，例如NAS、监控、大型企业资源等场景
+
+## 消息队列 Message queues
+
+消息队列是将消息从**源路由到目的地**或从发送方路由到接收方的队列。它遵循FIFO（先进先出）政策。首先发送的消息将首先传递。消息队列**促进了异步行为**，这允许模块在后台相互通信，而不会妨碍主要任务。它们还促进了跨模块通信，并为消息提供临时存储，直到消费者处理和消费它们。
+
+#### Kafka
+
+Apache Kafka于2011年作为LinkedIn的消息传递系统开始，但后来发展成为一个流行的**分布式事件流平台**。该平台每天能够处理数万亿条记录。Kafka是一个分布式系统，由通过TCP网络协议通信的服务器和客户端组成。系统允许我们读取、写入、存储和处理事件。Kafka主要用于构建数据管道和实现流解决方案。
+
+## 文件系统 File systems
+
+文件系统是**管理存储磁盘上的数据存储方式和位置**的进程。它管理存储磁盘的内部操作，并解释用户或应用程序如何访问磁盘数据。文件系统管理多个操作，例如：
+
+- File naming 文件命名
+- Storage management 存储管理
+- Directories 目录
+- Folders 文件夹
+- Access rules 访问规则
+
+如果没有文件系统，将很难识别文件、检索文件或管理单个文件的授权。
+
+### Google文件系统 Google File System (GFS)
+
+Google文件系统（GFS）是一个**可扩展的分布式文件系统**，专为Gmail或YouTube等**大型数据密集型应用程序设计**。它被构建来处理大型数据集的批处理。GFS是为系统到系统的交互而设计的，而不是用户到用户的交互。它具有可扩展性和容错性。该架构由GFS集群组成，其中包含一个主服务器和多个可由多个客户端访问的ChunkServer。
+
+### Hadoop分布式文件系统 Hadoop Distributed File System (HDFS)
+
+Hadoop分布式文件系统（HDFS）是一种**分布式文件系统**，可处理大型数据集并在商用硬件上运行。它旨在存储非结构化数据。HDFS是GFS的更简化版本。它的许多架构决策都受到GFS设计的启发。HDFS是围绕最有效的数据处理模式是“写一次，读多次”模式的想法构建的。
+
+![Basic HFFS architecture, with NameNode and multiple DataNodes.](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/hdfs-components-namenode-datanode-datanode.png)

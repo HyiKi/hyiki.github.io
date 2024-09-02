@@ -228,3 +228,63 @@ Merkle树是一个**二进制哈希树**，其中每个内部节点是它的两�
 ### 领导人选举 Leader election
 
 Leader选举是指**指定一个进程作为分布在多台计算机上的任务的组织者**。它是一种算法，使整个网络中的每个节点都能识别出一个特定的节点作为任务的领导者。网络节点相互通信以确定它们中的哪一个将是领导者。Leader election提高了效率，简化了架构，减少了操作。
+
+![image-20240901125434247](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/image-20240901125434247.png)
+
+## 数据库 Databases
+
+### 关系型数据库 Relational databases
+
+关系数据库或*SQL 数据库*是**结构化的**。它们有**预定义的模式**，就像存储号码和地址的电话簿一样。 SQL 数据库以行和列的形式存储数据。每行包含有关单个实体的所有可用信息，每列包含所有单独的数据点。流行的 SQL 数据库包括：
+
+- MySQL
+- Oracle 甲骨文
+- MS SQL Server 微软SQL服务器
+- SQLite
+- PostgreSQL
+- MariaDB
+
+#### MySQL
+
+MySQL 是一个开源关系数据库管理系统 (RDBMS)，它将数据存储在表和行中。它使用 SQL（结构化查询语言）来传输和访问数据，并使用SQL 连接来简化查询和关联。它遵循客户端-服务器架构并支持多线程。
+
+#### PostgreSQL
+
+PostgreSQL，也称为 Postgres，是一个强调可扩展性和 SQL 合规性的开源 RDBMS。 Postgres 使用 SQL 来访问和操作数据库。它使用自己的 SQL 版本，称为 PL/pgSQL，它可以执行比 SQL 更复杂的查询。 Postgres 事务遵循 ACID 原则。由于它具有关系结构，因此需要在创建时设计和配置整个模式。 Postgres 数据库使用外键，这使我们能够保持数据规范化。
+
+### SQL 连接 SQL joins
+
+SQL 连接允许我们**同时访问两个或多个表中的信息**。它们还使我们的数据库保持标准化，从而确保数据冗余度较低。当数据冗余度较低时，我们可以在删除或更新记录时减少应用程序中的数据异常量。
+
+![image-20240901133311299](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/image-20240901133311299.png)
+
+### 非关系型数据库 Non-relational databases
+
+非关系数据库或非*SQL 数据库*是**非结构化的**。它们有一个**动态模式**，就像文件夹一样，用于存储从某人的地址和电话号码到他们的 Facebook 点赞和在线购物偏好等信息。 NoSQL 有不同类型。最常见的类型包括：
+
+- Key-value stores, such as Redis and DynamoDB
+  键值存储，例如Redis和 DynamoDB
+- Document databases, such as MongoDB and CouchDB
+  文档数据库，例如 MongoDB 和 CouchDB
+- Wide-column databases, such as Cassandra and HBase
+  宽列数据库，例如 Cassandra 和 HBase
+- Graph databases, such as Neo4J and InfiniteGraph
+  图数据库，例如 Neo4J 和 InfiniteGraph
+
+#### MongoDB
+
+MongoDB 是一种 NoSQL、非关系数据库管理系统 (DBMS)，它使用文档而不是表或行来存储数据。该数据模型使得在单个数据库操作中操纵相关数据成为可能。 MongoDB 文档使用支持 JavaScript 的类似 JSON 的文档和文件。文档字段可能会有所不同，因此可以轻松地随着时间的推移更改结构。
+
+### 如何选择数据库 How to choose a database
+
+数据库是软件开发的基础。它们为各种规模和类型的建筑项目提供多种不同的用途。选择数据库结构时，**考虑速度、可靠性和准确性**非常重要。我们有可以保证数据有效性的关系型数据库，也有可以保证最终一致性的非关系型数据库。选择数据库结构时，考虑数据库基础知识非常重要，例如：
+
+- ACID 
+- BASE 
+- SQL joins SQL 连接
+- Normalization 
+- Persistence 
+- Etc. 
+
+### 数据库模式 Database schemas
+

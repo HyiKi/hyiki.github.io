@@ -646,7 +646,7 @@ saveOrUpdate(entity, eq);
 
 ---
 
-### 24 查询SQL锁日志，排查慢SQL疑难杂症
+### 24 查询SQL锁日志，排查慢SQL疑难杂症（postgresql）
 
 - **作用**：查询详细的SQL执行情况，以及锁获取情况
 
@@ -720,4 +720,102 @@ saveOrUpdate(entity, eq);
     locktype,datname,relation,page,tuple,virtualxid,transactionid::text,classid,objid,objsubid ;
   ```
 
-  
+
+---
+
+### 25 线上数据库CPU飙升，紧急处理手册（ref）
+
+#### Postgresql 紧急杀进程方式
+
+##### 怎么查
+
+ **本文仅为模版,大家可以通过where** **query** **或者 usename等方式来增加限定范围**
+
+```Bash
+select datname,pid,usename,client_addr,query from pg_stat_activity where state<>'idle' and now()-query_start > interval '1 s' order by query_start ; 
+```
+
+ 查询结果示例
+
+![img](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/(null)-20240830151435255.(null))
+
+##### 怎么杀
+
+**本文仅为模版,大家请在实际使用中将模版中4-10行的sql替换为查询时实际使用的sql**
+
+```Bash
+# 批量
+DO $$ DECLARE activity_pid INT;
+
+BEGIN FOR activity_pid IN (
+  SELECT
+    pid
+  FROM
+    pg_stat_activity
+  WHERE
+    state <> 'idle'
+    AND now() - query_start > interval '1 s'
+)
+LOOP
+EXECUTE 'SELECT pg_terminate_backend(' || activity_pid || ')';
+
+END
+LOOP;
+
+END $$;
+
+
+
+# 杀掉单独的pid
+SELECT pg_terminate_backend($PID)
+```
+
+#### Mysql 紧急杀进程方式
+
+##### 怎么查
+
+```Bash
+# 查询超过1s的 mysql慢sql
+SELECT 
+    ID, 
+    USER, 
+    HOST, 
+    DB, 
+    COMMAND, 
+    TIME, 
+    STATE, 
+    INFO 
+FROM 
+    information_schema.PROCESSLIST 
+WHERE 
+    COMMAND = 'Query' 
+    AND TIME > 1;
+    #单位秒
+    
+    
+    
+```
+
+ 查询结果示例
+
+![img](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/(null)-20240830151606599.(null))
+
+##### 怎么杀
+
+```Bash
+# 条件中按照实际规则来匹配,本实例中为删除sql为select sleep(599)的,并且执行时间超过1秒的sql
+SELECT CONCAT('KILL ', id, ';')
+FROM information_schema.processlist
+where info = "SELECT SLEEP(599)"
+  AND time > 1;
+```
+
+![img](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/(null)-20240830151357959.(null))
+
+运行后生成相关的 kill语句 复制 粘贴 运行 一气呵成
+
+#### 如何执行高权限sql（阿里云DMS）
+
+![img](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/(null)-20240830151358295.(null))
+
+在dms中通过右上角的标记进入superadmin功能,可暂时屏蔽安全规则,**非紧急情况请勿使用**

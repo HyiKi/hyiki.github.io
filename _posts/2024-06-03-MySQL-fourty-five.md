@@ -9,11 +9,13 @@ excerpt: MySQL实战45讲
 * content
 {:toc}
 
+
+
 ## 1、基础架构：一条SQL查询语句是如何执行的？
 
 SQL语句在MySQL各个功能模块中的执行过程：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190831154353799.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70.png)
 
 大体来说，MySQL 可以分为 Server 层和存储引擎层两部分
 
@@ -28,7 +30,7 @@ SQL语句在MySQL各个功能模块中的执行过程：
 
 ### 日志模块：redo log
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190831154516315.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240830152644126.png)
 
 在做更新操作时，如果每一次更新操作都立即写进磁盘，那么整个过程IO成本、查找成本都很高。redo log就是为了解决这一问题，MySQL通过WAL（Write-Ahead Logging）技术，先把更新操作写入redo log日志，并更新内存，这时更新操作就完成了，同时InnoDB引擎会在适当的时候（系统比较空闲时），将一批操作更新到磁盘里面。如果redo log写满时，就不能再执行新的更新，得停下来先擦掉redo log一些记录，写入磁盘，再执行新的更新。
 
@@ -298,13 +300,13 @@ MySQL支持前缀索引，你可以定义字符串的一部分作为索引。默
 
 1. 第一种方式是使用倒序存储。有时字符串倒叙会有很好的区分度。
 
-    mysql> select field_list from t where id_card = reverse('input_id_card_string');
+   mysql> select field_list from t where id_card = reverse('input_id_card_string');
 
 2. 第二种方式是使用hash字段。你可以在表上再创建一个整数字段，来保存身份证的校验码，同时在这个字段上创建索引。
 
-    mysql> alter table t add id_card_crc int unsigned, add index(id_card_crc);
+   mysql> alter table t add id_card_crc int unsigned, add index(id_card_crc);
 
-    mysql> select field_list from t where id_card_crc=crc32('input_id_card_string') and id_card='input_id_card_string'
+   mysql> select field_list from t where id_card_crc=crc32('input_id_card_string') and id_card='input_id_card_string'
 
 ### 异同点
 
@@ -345,10 +347,10 @@ MySQL支持前缀索引，你可以定义字符串的一部分作为索引。默
 1. 第三种是空闲时候写，第四种是数据库关闭时候写，通常不会关注性能问题。
 2. 第一种是redo log写满了，要flush脏页。这时系统不再接受更新了，所有的更新都会堵住。
 3. 第二种是内存不够了，现将脏页写到磁盘，数据页淘汰机制（最久不使用）。InnoDB 用缓冲池(buffer pool)管理内存,缓冲池中的内存页有三种状态:
-1. 还没使用的
-2. 使用了是干净页
-3. 使用了是脏页
-    如果淘汰的是脏页，要先flush到磁盘后，才能复用。
+4. 还没使用的
+5. 使用了是干净页
+6. 使用了是脏页
+   如果淘汰的是脏页，要先flush到磁盘后，才能复用。
 
 ### InnoDB 刷脏页的控制策略
 
@@ -565,7 +567,7 @@ order by rand() 使用了内存临时表，内存临时表排序的时候使用�
 例如：
 
     alter table trade_detail modify tradeid varchar(32) CHARACTER SET utf8mb4 default null;
-
+    
     select d.* from tradelog l, trade_detail d where d.tradeid=CONVERT(l.tradeid USING utf8) and l.id=2;
 
 ### 总结
@@ -1201,11 +1203,14 @@ MySQL 5.7 并行复制策略的思想是：
 一种取同步位点的方法：
 
 1. 等待新主库 A' 把中转日志（relay log）全部同步完成；
+
 2. 在 A' 上执行 show master status 命令，得到当前 A' 上最新的 File 和 Position；
+
 3. 取原主库 A 故障的时刻 T；
+
 4. 用 mysqlbinlog 工具解析 A' 的 file, 得到 T时刻的位点。
 
-    mysqlbinlog File --stop-datetime=T --start-datetime=T
+   mysqlbinlog File --stop-datetime=T --start-datetime=T
 
 ![](https://img-blog.csdnimg.cn/2019041922595591.png)
 
@@ -1233,11 +1238,11 @@ Global Transaction identifier，也就是全局事务 ID，是一个事务在提
 在启动MySQL实例时，通过加上参数 gtid_mode=on 和 enforce_gtid_consistency=on 就可以启动GTID模式了。在GTID模式下，每一个事务都与一个GTID一一对应。GTID的两种生成方式，由session变量gtid_next的值决定：
 
 1. 如果 gtid_next=automatic，代表使用默认值。这时，MySQL就会把 server_uuid:gno 分配给这个事务
-1. 记录binlog的时候，先记录一行 SET @@SESSION.GTID_NEXT='server_uuid:gno';
-2. 把这个GTID加入到本实例的 GTID 集合。
-2. 如果 gtid_next 是一个指定的 GTID 值，那么就有两种可能：
-1. 如果指定值已经在 GTID 集合中，接下来执行的这个事务直接被系统忽略，不执行该事务；
-2. 如果指定值没有在 GTID 集合中，就将该值分配给这个事务。系统不需要给这个事务生成新的 GTID， 因此gno 也不用加1。
+2. 记录binlog的时候，先记录一行 SET @@SESSION.GTID_NEXT='server_uuid:gno';
+3. 把这个GTID加入到本实例的 GTID 集合。
+4. 如果 gtid_next 是一个指定的 GTID 值，那么就有两种可能：
+5. 如果指定值已经在 GTID 集合中，接下来执行的这个事务直接被系统忽略，不执行该事务；
+6. 如果指定值没有在 GTID 集合中，就将该值分配给这个事务。系统不需要给这个事务生成新的 GTID， 因此gno 也不用加1。
 
 这样，每个 MySQL 实例都维护了一个GTID 集合，用来对应“这个实例执行过的所有事务”。
 
@@ -1349,12 +1354,16 @@ semi-sycn 配合判断主备无延迟的方案，存在两个问题：
 执行逻辑：
 
 1. trx1 事务更新完成后，马上执行 show master status 得到当前主库执行到的 File 和Position；
+
 2. 选定一个从库执行查询语句；
+
 3. 在从库上执行 select master_pos_wait(File, Position, 1);
+
 4. 如果返回值是 >= 0 的正整数，则在这个从库执行查询语句；
+
 5. 否则，到主库执行查询语句。
 
-    select master_pos_wait(file, pos[, timeout]);
+   select master_pos_wait(file, pos[, timeout]);
 
 表示从命令开始执行，到应用完 file 和 pos 表示的 binlog 位置，执行了多少事务。
 
@@ -1776,8 +1785,8 @@ MySQL也并没有使用 Simple Nested-Loop Join 算法，而是使用了 “Bloc
 
 1. 如果是 NLJ 算法，应该选择小表；
 2. 如果是 BNL 算法：
-1. 在 join_buffer_size 足够大时，都一样；
-2. 在 join_buffer_size 不够大的时候（通常情况下），选择小表。
+3. 在 join_buffer_size 足够大时，都一样；
+4. 在 join_buffer_size 不够大的时候（通常情况下），选择小表。
 
 所以这个问题的结论是选择小表做驱动表。
 
@@ -1840,12 +1849,14 @@ BNL 算法对系统的影响主要包括三个方面：
 一些情况下，可以直接在被驱动表上建索引，这时可以直接转成 BKA 算法。但是有些时候不适合建索引，比如这个 join SQL语句是低频执行，而且经过 where 条件过滤后数据量很少，如果这时加索引的话就很浪费。如果不加索引，就要比对很多次，占用 CPU 资源。可以同过使用临时表来解决：
 
 1. 把表 t2 中满足条件的数据放在临时表 tmp_t 中；
+
 2. 为了让 join 使用 BKA 算法，给临时表 tmp_t 的字段 b 加上索引；
+
 3. 让表 t1 和 tmp_t 做 join 操作。
 
-    create temporary table temp_t(id int primary key, a int, b int, index(b))engine=innodb;
-    insert into temp_t select *from t2 where b>=1 and b<=2000;
-    select* from t1 join temp_t on (t1.b=temp_t.b);
+   create temporary table temp_t(id int primary key, a int, b int, index(b))engine=innodb;
+   insert into temp_t select *from t2 where b>=1 and b<=2000;
+   select* from t1 join temp_t on (t1.b=temp_t.b);
 
 ### 扩展 -hash join
 
@@ -1902,14 +1913,16 @@ BNL 算法对系统的影响主要包括三个方面：
 第二种思路是，把各个分库拿到的数据，汇总到一个 MySQL 实例的一个表中，然后在这个汇总实例上做逻辑操作。流程类似于：
 
 * 在汇总库上创建一个临时表 temp_ht，表里包含三个字段 v、k、t_modified；
+
 * 在各个分库上执行
 
-    select v,k,t_modified from ht_x where k >= M order by t_modified desc limit 100;
+  select v,k,t_modified from ht_x where k >= M order by t_modified desc limit 100;
 
 * 把分库执行的结果插入到 temp_ht 表中；
+
 * 执行下面语句得到结果
 
-    select v from temp_ht order by t_modified desc limit 100;
+  select v from temp_ht order by t_modified desc limit 100;
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20190728175523813.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
 
@@ -1983,7 +1996,7 @@ group by 的语义逻辑，是统计不同的值出现的个数。由于每一�
 在 MySQL 5.7 版本支持了 generated column 机制，用来实现列数据的关联更新。你可以用下面的方法创建一个列 z，然后在 z 列上创建一个索引。
 
     alter table t1 add column z int generated always as(id % 100), add index(z);
-
+    
     select z, count(*) as c from t1 group by z;
 
 ### group by 优化方法 -- 直接排序
@@ -2133,9 +2146,9 @@ mysql5.1.22版本新增参数 innodb_autoinc_lock_mode ，默认值是1。
 
 1. 这个参数值为0时，表示采用5.0版本策略。
 2. 当值为1时：
-1. 普通insert语句，自增锁在申请之后就马上释放；
-2. 类似 insert… select 这样的批量插入语句，自增锁还是要等语句结束后才被释放；
-3. 参数的值为2时，所有的申请自增主键的动作都是申请后就释放锁。
+3. 普通insert语句，自增锁在申请之后就马上释放；
+4. 类似 insert… select 这样的批量插入语句，自增锁还是要等语句结束后才被释放；
+5. 参数的值为2时，所有的申请自增主键的动作都是申请后就释放锁。
 
 为了数据一致性才会在 insert… select 语句执行时值设置成1，等语句结束后才释放锁。
 
@@ -2229,11 +2242,11 @@ insert 语句如果出现唯一键冲突，会在冲突的唯一值上加共享�
 
 1. 这条语句会将结果保存在服务端。
 2. into outfile 指定了文件的生成位置（/server_tmp/），这个位置受参数 secure_file_priv 的限制。其值和作用分别是：
-1. 如果设置为 empty，表示不限制文件生成的位置，这是不安全的设置；
-2. 如果设置为一个表示路径的字符串，就要求生成的文件只能放在这个指定的目录，或者它的子目录；
-3. 如果设置为 NULL ，就表示禁止在这个 MySQL 实例上执行 select ... into outfile 操作。
-4. 这条命令不会覆盖同名的文件，如果有同名文件，将会报错。
-5. 生成的文本文件中，原则上一个数据行对应文本文件的一行。换行符、制表符等符号，前面会加上"\"转义符。
+3. 如果设置为 empty，表示不限制文件生成的位置，这是不安全的设置；
+4. 如果设置为一个表示路径的字符串，就要求生成的文件只能放在这个指定的目录，或者它的子目录；
+5. 如果设置为 NULL ，就表示禁止在这个 MySQL 实例上执行 select ... into outfile 操作。
+6. 这条命令不会覆盖同名的文件，如果有同名文件，将会报错。
+7. 生成的文本文件中，原则上一个数据行对应文本文件的一行。换行符、制表符等符号，前面会加上"\"转义符。
 
 用下面的 load data 命令将数据导入到目标表 db2.t 中：
 
@@ -2244,9 +2257,9 @@ insert 语句如果出现唯一键冲突，会在冲突的唯一值上加共享�
 1. 打开文件 /server_tmp/t.csv，以制表符（\t）作为字段间的分隔符，以换行符（\n）作为记录之间的分隔符，进行数据读取；
 2. 启动事务；
 3. 判断每一行的字段数与表 db2.t 是否相同：
-1. 不相同，直接报错，事务回滚；
-2. 相同，则构造成一行，调用 InnoDB 引擎接口，写入到表中。
-4. 重复步骤3，知道整个文件读完，提交事务。
+4. 不相同，直接报错，事务回滚；
+5. 相同，则构造成一行，调用 InnoDB 引擎接口，写入到表中。
+6. 重复步骤3，知道整个文件读完，提交事务。
 
 在备库重放：
 
@@ -2254,8 +2267,8 @@ insert 语句如果出现唯一键冲突，会在冲突的唯一值上加共享�
 2. 往 binlog 文件中写入语句 load data local infile '/tmp/SQL_LOAD_MB-1-0' INTO TABLE `db2`.`t`。
 3. 包这个 binlog 日志传到备库。
 4. 备库的 apply 线程在执行这个事务日志时：
-1. 先将 binlog 中的 t.csv 文件内容读出来，写入本地临时目录 /tmp/SQL_LOAD_MB-1-0 中；
-2. 再执行 load data 语句，往备库的 db2.t 表中插入跟主库相同的数据。
+5. 先将 binlog 中的 t.csv 文件内容读出来，写入本地临时目录 /tmp/SQL_LOAD_MB-1-0 中；
+6. 再执行 load data 语句，往备库的 db2.t 表中插入跟主库相同的数据。
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20190825163434784.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
 
@@ -2288,11 +2301,11 @@ MySQL 5.6 版本引入了可传输表空间的方法，可以通过导出 + 导�
 三种拷贝表方法的优缺点：
 
 1. 物理拷贝方式速度最快，尤其对于大表拷贝来说是最快的方法。但有其局限性：
-1. 必须是全表拷贝，不能只拷贝部分数据；
-2. 需要的服务器上拷贝数据，用户无法登录数据库主机的场景下无法使用；
-3. 由于是通过拷贝物理文件实现的，源表和目标表都是使用 InnoDB 引擎时才能使用；
-2. 用 mysqldump 生成含有 INSERT 语句文件的方法，可以在 where 参数增加过滤条件，来实现只导出部分数据。不足之一是，不能使用 join 这种比较复杂的 where 条件写法。
-3. 用 select ... into outfile 的方法是灵活的，支持所有的 SQL 写法。缺点是，每次只能导出一张表，而且表结构也需要另外的语句单独备份。
+2. 必须是全表拷贝，不能只拷贝部分数据；
+3. 需要的服务器上拷贝数据，用户无法登录数据库主机的场景下无法使用；
+4. 由于是通过拷贝物理文件实现的，源表和目标表都是使用 InnoDB 引擎时才能使用；
+5. 用 mysqldump 生成含有 INSERT 语句文件的方法，可以在 where 参数增加过滤条件，来实现只导出部分数据。不足之一是，不能使用 join 这种比较复杂的 where 条件写法。
+6. 用 select ... into outfile 的方法是灵活的，支持所有的 SQL 写法。缺点是，每次只能导出一张表，而且表结构也需要另外的语句单独备份。
 
 ## 42 | grant之后要跟着flush privileges吗？
 
@@ -2427,9 +2440,9 @@ group by 在没有聚合函数的情况下，其执行逻辑是一样的，因�
 
 1. 创建一个临时表，临时表有一个字段 a ，并且在这个字段 a 上创建一个唯一索引；
 2. 遍历表 t，一次取数据插入临时表中；
-1. 如果发现唯一键冲突，就跳过；
-2. 否则插入成功；
-3. 遍历完成后，将临时表作为结果集返回给客户端。
+3. 如果发现唯一键冲突，就跳过；
+4. 否则插入成功；
+5. 遍历完成后，将临时表作为结果集返回给客户端。
 
 ### 备库自增主键问题
 

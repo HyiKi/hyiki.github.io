@@ -76,7 +76,9 @@ excerpt: 系统设计指南，读书笔记，持续更新中。。。
 ![image-20240819161429344](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/image-20240819161429344.png)
 
 > 转发代理
+>
 > 正向代理：VPN
+>
 > 反向代理：<https://cloudflare-call.hyiki.sbs/>
 
 ## CAP定理 CAP theorem
@@ -86,14 +88,21 @@ CAP定理是系统设计领域中的一个基本定理。它指出分布式系�
 ![image-20240819161709430](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/image-20240819161709430.png)
 
 > CAP理论
+>
 > 【CA】满足ACID理论，例如传统的关系型数据库：MySQL、Oracle
+>
 > 【AP】保证可用性 & 分区容错性，不要求实时的一致性，例如：ES
+>
 > 【CP】满足BASE理论，例如基于Raft分布式系统协议，选举过程是不可用的：Redis
 >
 > 延伸：BASE理论，CAP理论的放松版本
+>
 > 【BA】基本可用
+>
 > 【S】软状态，系统可能会处于一种中间状态，**系统允许短暂的不一致性**
+>
 > 【E】最终一致性
+>
 > 【核心思想】 即使无法做到强一致性（Strong consistency），但每个应用都可以根据自身的业务特点，采用适当的方式来使系统达到最终一致性（Eventual consistency）。
 
 ## 冗余和复制 Redundancy and replication
@@ -292,7 +301,7 @@ MongoDB 是一种 NoSQL、非关系数据库管理系统 (DBMS)，它使用文�
 
 有两种主要的数据库模式类型定义模式的不同部分：**逻辑和物理**。
 
-![image-20240902113137892](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/image-20240902113137892.png)
+![image-20240903120613266](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/image-20240903120613266.png)
 
 数据库模式包括：
 
@@ -310,3 +319,120 @@ MongoDB 是一种 NoSQL、非关系数据库管理系统 (DBMS)，它使用文�
 ### 数据库查询 Database queries
 
 数据库查询是**从数据库访问数据以操作或检索数据的请求**。它与CRUD 操作关系最为密切。数据库查询允许我们使用响应查询而获得的信息执行逻辑。有许多不同的查询方法，从使用查询字符串到使用查询语言编写，再到使用 QBE（示例查询）（如 GraphQL）。
+
+### ACID 特性 ACID properties
+
+为了**维护数据库的完整性**，所有事务都必须遵守ACID 属性。 ACID 是缩写词，代表原子性、一致性、隔离性和持久性。
+
+![image-20240902201957412](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/image-20240902201957412.png)
+
+- **Atomicity**: A transaction is an atomic unit. All of the instructions within a transaction will successfully execute, or none of them will execute.
+  **原子性**：事务是一个原子单元。事务中的所有指令都将成功执行，或者都不执行。
+- **Consistency**: A database is initially in a consistent state, and it should remain consistent after every transaction.
+  **一致性**：数据库最初处于一致状态，并且在每次事务之后都应该保持一致。
+- **Isolation**: If multiple transactions are running concurrently, they shouldn’t be affected by each other, meaning that the result should be the same as the result obtained if the transactions were running sequentially.
+  **隔离性**：如果多个事务并发运行，它们不应该互相影响，这意味着结果应该与事务顺序运行时获得的结果相同。
+- **Durability**: Changes that have been committed to the database should remain, even in the event of a software or system failure.
+  **持久性**：即使发生软件或系统故障，已提交到数据库的更改也应保留。
+
+### 数据库分片和分区 Database sharding and partitioning
+
+对数据库进行分片时，您会对数据进行分区，以便**将数据分为各种更小的、不同的块**，称为分片。每个分片可以是一个表、一个 Postgres 模式或保存在单独数据库服务器实例上的不同物理数据库。数据库中的某些数据仍然存在于所有分片中，而某些数据仅出现在单个分片中。这两种情况可以称为垂直分片和水平分片。我们来看一个视觉效果：
+
+![image-20240902204337337](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/image-20240902204337337.png)
+
+要对数据进行分片，您需要确定**分片键**来对数据进行分区。分片键可以是集合中每个文档中存在的索引字段或索引复合字段。没有确定分片键的通用规则。这一切都取决于您的应用程序。
+
+分片允许您的应用程序进行更少的查询。当它收到请求时，应用程序知道将该请求路由到哪里。这意味着它必须查看更少的数据，而不是遍历整个数据库。分片可以提高应用程序的整体性能和可扩展性。
+
+数据分区是一种将大数据库分解为更小的部分的技术。此过程允许我们将数据库拆分到多台机器上，以提高应用程序的性能、可用性、负载平衡和可管理性。
+
+### 数据库索引 Database indexing
+
+数据库索引使您可以**更快、更轻松地搜索表**并找到所需的行或列。可以使用数据库表的一列或多列创建索引，为快速随机查找和有序信息的高效访问提供基础。虽然索引极大地加快了数据检索速度，但由于其大小，它们通常会减慢数据插入和更新速度。
+
+## 什么是分布式系统？ What are distributed systems?
+
+分布式系统使我们更容易**以指数速度扩展我们的应用程序**。许多顶级科技公司使用复杂的分布式系统来处理数十亿个请求并在不停机的情况下执行更新。分布式系统是一组计算机的集合，这些计算机一起工作为最终用户形成一台计算机。集合中的所有计算机共享相同的状态并同时运行。这些机器也可以独立发生故障，而不会影响整个系统。
+
+分布式系统可能难以部署和维护，但它们提供了许多好处，包括：
+
+- **Scaling**: Distributed systems allow you to scale horizontally to account for more traffic.
+  **扩展**：分布式系统允许您水平扩展以适应更多流量。
+- **Modular growth**: There’s almost no cap on how much you can scale.
+  **模块化增长**：您可以扩展的程度几乎没有上限。
+- **Fault tolerance**: Distributed systems are more fault-tolerant than single machines.
+  **容错性**：分布式系统比单机系统具有更高的容错性。
+- **Cost-effective**: The initial cost is higher than traditional systems, but because of their capacity to scale, they quickly become more cost-effective.
+  **成本效益**：初始成本高于传统系统，但由于其扩展能力，它们很快就变得更具成本效益。
+- **Low latency**: You can have a node in multiple locations, so traffic will hit the closest node.
+  **低延迟**：您可以在多个位置拥有一个节点，因此流量将到达最近的节点。
+- **Efficiency**: Distributed systems break complex data into smaller pieces.
+  **效率**：分布式系统将复杂的数据分解成更小的部分。
+- **Parallelism**: Distributed systems can be designed for parallelism, where multiple processors divide up a complex problem into smaller chunks.
+  **并行性**：分布式系统可以设计为并行性，其中多个处理器将复杂的问题划分为更小的块。
+
+## 分布式系统故障 Distributed system failures
+
+分布式系统可能会遇到多种类型的故障。四种基本类型的故障包括：
+
+**系统故障** **System failure**
+
+系统故障是由于软件或硬件故障而发生的。系统故障通常会导致主存储器内容丢失，但辅助存储器仍然安全。每当系统出现故障时，处理器就无法执行任务，系统可能会重新启动或死机。
+
+**通讯介质故障** **Communication medium failure**
+
+通信介质故障是由于通信链路故障或节点移动而发生的。
+
+**二级存储故障** **Secondary storage failure**
+
+当辅助存储设备上的信息无法访问时，就会发生辅助存储故障。它可能是由许多不同的原因造成的，包括节点崩溃、介质上的污垢和奇偶校验错误。
+
+**方法失败** **Method failure**
+
+方法失败通常会停止分布式系统并使其根本无法执行任何操作。系统可能会在方法失败期间进入死锁状态或发生保护违规。
+
+## 分布式系统基础知识 Distributed system fundamentals
+
+### 映射&归约 MapReduce
+
+MapReduce是Google开发的一个框架，用于高效**处理大量数据**。 MapReduce 使用大量服务器进行数据管理和分发。该框架提供了对用户命令执行期间发生的底层进程的抽象。其中一些过程包括容错、分区数据和聚合数据。这些抽象**允许用户专注于程序的更高级别逻辑，**同时信任框架能够顺利地继续底层流程。
+
+MapReduce的工作流程如下：
+
+![image-20240903120059895](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/image-20240903120059895.png)
+
+- **Partitioning**: The data is usually in the form of a big chunk. It’s necessary to begin by partitioning the data into smaller, more manageable pieces that can be efficiently handled by the map workers.
+  **分区**：数据通常以大块的形式存在。有必要首先将数据划分为更小、更易于管理的部分，以便Map Workers可以有效地处理这些部分。
+- **Map**: Map workers receive the data in the form of a key-value pair. This data is processed by the map workers, according to the user-defined map function, to generate intermediate key-value pairs.
+  **Map** ：Map Workers 以键值对的形式接收数据。这些数据由Map Workers根据用户定义的map函数进行处理，以生成中间键值对。
+- **Intermediate files**: The data is partitioned into *R* partitions (with *R* being the number of reduce workers). These files are buffered in the memory until the primary node forwards them to the reduce workers.
+  **中间文件**：数据被划分为*R*个分区（ *R*是reduce workers的数量）。这些文件会缓冲在内存中，直到主节点将它们转发给reduce工作节点。
+- **Reduce**: As soon as the reduce workers get the data stored in the buffer, they sort it accordingly and group data with the same keys.
+  **Reduce**：一旦reduce workers获取存储在缓冲区中的数据，他们就会相应地对其进行排序，并使用相同的键对数据进行分组。
+- **Aggregate**: The primary node is notified when the reduce workers are done with their tasks. In the end, the sorted data is aggregated together and *R* output files are generated for the user.
+  **聚合**：当reduce工作线程完成任务时，主节点会收到通知。最后，将排序后的数据聚合在一起，为用户生成*R*个输出文件。
+
+### 无状态和有状态系统 Stateless and stateful systems
+
+无状态和有状态系统是分布式系统世界中的重要概念。系统要么是无状态的，要么是有状态的。无状态系统**不维护过去事件的状态**。它根据我们提供给它的输入执行。有状态系统负责**维护和改变状态**。
+
+> **无状态系统**
+>
+> - **Web服务器**：如Nginx或Apache，它们通常作为无状态系统运行，处理来自客户端的HTTP请求，而不保存任何会话状态。
+> - **RESTful API**：遵循REST原则的API通常是无状态的，每个请求都包含足够的信息以供服务器处理，而不需要依赖先前的请求。
+>
+> **有状态系统**
+>
+> - **数据库系统**：如MySQL或MongoDB，它们保存客户端的数据并维护数据的状态，以便在后续查询中提供一致的结果。
+> - **会话管理**：如Web应用中的用户登录会话，服务器需要保存用户的登录状态，以便在用户执行后续操作时识别用户。
+
+### Raft （分布式一致性算法）
+
+Raft**将复制状态机和相关命令复制日志的概念建立**为first-class citizens，并默认支持多轮连续共识。它需要一组节点形成共识组，或者说 Raft 集群。其中每一个都可以处于以下三种状态之一：
+
+- Leader 领导者
+- Follower 追随者
+- Candidate 候选人
+
+![image-20240903185927013](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/image-20240903185927013.png)

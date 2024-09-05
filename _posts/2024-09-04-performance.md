@@ -1,14 +1,13 @@
-```
+---
 title: 性能指标：QPS、TPS、RT、吞吐量
 date:  2024-08-20 20:30:00 +0800
 category: Reference
 tags: [Learning]
 excerpt: 性能指标：QPS、TPS、RT、吞吐量
-```
-
-[TOC]
-
 ---
+
+* content
+{:toc}
 
 ### 一、QPS，每秒查询
 

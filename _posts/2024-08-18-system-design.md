@@ -47,7 +47,7 @@ excerpt: 系统设计指南，读书笔记，持续更新中。。。
 
 ## 微服务 Microservices
 
-[微服务](https://www.educative.io/edpresso/what-are-microservices)或微服务架构是一种架构风格，使用松散耦合的服务构建应用程序。它将大型应用程序划分为一组独立的模块化服务。这些模块可以独立开发、部署和维护。
+微服务或微服务架构是一种架构风格，使用松散耦合的服务构建应用程序。它将大型应用程序划分为一组独立的模块化服务。这些模块可以独立开发、部署和维护。
 
 ![image-20240818212258678](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/image-20240818212258678.png)
 
@@ -436,3 +436,55 @@ Raft**将复制状态机和相关命令复制日志的概念建立**为first-cla
 - Candidate 候选人
 
 ![image-20240903185927013](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/image-20240903185927013.png)
+
+## 分布式系统设计模式 Distributed system design patterns
+
+设计模式为我们提供了构建适合特定用例的系统的方法。它们就像**构建块**一样，使我们能够从现有知识中提取知识，而不是从头开始每个系统。他们还创建了一组用于系统设计的标准模型，帮助其他开发人员了解他们的项目如何与给定系统交互。
+
+创建型设计模式在构建新对象时提供了基线。结构模式定义了解决方案的整体结构。行为模式描述对象以及它们如何相互通信。分布式系统设计模式概述了不同节点如何相互通信、哪些节点处理特定任务以及各种任务的流程应该是什么样子的软件架构。
+
+大多数分布式系统设计模式根据其使用的功能**分为以下三类之一**：
+
+- **Object communication**: Describes the messaging protocols and permissions for different components of the system to communicate
+  **对象通信**：描述系统不同组件进行通信的消息传递协议和权限
+- **Security**: Handles confidentiality, integrity, and availability concerns to ensure the system is secure from unauthorized access
+  **安全性**：处理机密性、完整性和可用性问题，以确保系统免受未经授权的访问
+- **Event-driven**: Describes the production, detection, consumption, and response to system events
+  **事件驱动**：描述系统事件的产生、检测、消费和响应
+
+## 可扩展的网络应用程序 Scalable web applications
+
+### DNS 和负载平衡 DNS and load balancing
+
+DNS（即*域名系统*）通过**将简单的域名映射到 IP 地址，**避免了记住长 IP 地址来访问网站的情况。您可以为需要将用户流量分散到不同数据中心的不同集群的大型应用程序和系统设置 DNS 负载平衡。
+
+负载平衡对于我们的扩展工作非常重要。它使我们能够**随着流量的增加而有效地扩展并保持高可用性**。负载平衡由负载平衡器执行，负载平衡器是充当反向代理的设备。他们负责使用不同的算法在多个服务器之间分配网络流量。流量分布有助于避免所有流量汇聚到单台机器或集群中的几台机器的风险。如果流量仅集中到几台机器，这将使它们超载并导致它们瘫痪。
+
+负载均衡可以帮助我们避免这些问题。如果应用程序处理用户请求时服务器出现故障，负载均衡器会自动将未来的请求路由到正在运行的服务器。
+
+![image-20240906151647351](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/image-20240906151647351.png)
+
+### N层应用程序 N-tier applications
+
+N 层应用程序或*分布式应用程序*是**涉及三个以上组件的应用程序**。这些组件可以是：
+
+- Caches 缓存
+- Message queues 消息队列
+- Load balancers 负载均衡器
+- Search servers 搜索服务器
+- Components involved in processing large amounts of data
+  涉及处理大量数据的组件
+- Components running heterogeneous tech, commonly known as web services
+  运行异构技术的组件，通常称为 Web 服务
+
+Instagram、Facebook 和 Uber 等大型应用程序是 n 层应用程序。
+
+### HTTP 和 REST HTTP and REST
+
+HTTP 代表超文本传输协议。该协议**规定了消息的格式、消息发送的方式和时间、适当的响应以及消息的解释方式**。 HTTP 消息可以是*请求*，也可以是*响应*。 HTTP API 将端点公开为 API 网关，以便 HTTP 请求访问服务器。根据其目标用例，它们有多种形式，并且可以根据创建它们时使用的架构设计原则进一步分类。
+
+REST 代表表述性状态转移。它是一种用于实现 Web 服务的软件架构风格。 REST 是一个**规则集，定义了客户端和服务器之间共享数据的最佳实践**，它强调组件的可扩展性和接口的简单性。 REST 应用程序使用 HTTP 方法，例如`GET` 、 `POST` 、 `DELETE`和`PUT` 。
+
+REST API 是遵循 REST 架构原则的 API 实现。它们充当**客户端和服务器之间通过 HTTP 进行通信的接口**。 REST API 利用 HTTP 方法在客户端和服务器之间建立通信。 REST 还使服务器能够缓存响应，从而提高应用程序性能。
+
+HTTP 和 REST 是系统设计中客户端-服务器通信的重要概念和考虑因素。

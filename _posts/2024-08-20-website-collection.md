@@ -20,3 +20,40 @@ excerpt: 沉浸在每天的开发工作，会错过很多遇到的宝藏，来�
 ## 智能仓储解决方案
 
 - [沃港智能](https://www.wogangtech.com/)
+
+## 内网穿透
+
+- [ngrok](https://dashboard.ngrok.com/get-started/setup/)
+
+## Spring Framework
+
+- [spring AI](https://docs.spring.io/spring-ai/reference/getting-started.html)
+
+## AI 大模型服务
+
+- [腾讯混元大模型](https://console.cloud.tencent.com/hunyuan/start)
+- [Open AI ChatGPT](https://chatgpt.com/)
+- [百度千帆大模型](https://console.bce.baidu.com/qianfan)
+- [字节豆包大模型](https://www.doubao.com/chat/)
+- [阿里通义千问](https://tongyi.aliyun.com/qianwen/)
+- [Google Gemini](https://gemini.google.com/app)
+- [Anthropic claude](https://claude.ai/)
+
+## LOL
+
+- [DraftGap](https://draftgap.com/)
+
+## 开发平台
+
+- [微信公众平台](https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login)
+
+## 云服务
+
+- [racknerd](https://www.racknerd.com/)
+- [vercel](https://vercel.com/)
+- [netlify](https://www.netlify.com/)
+- [cloudflare](https://dash.cloudflare.com/)
+
+## 域名服务
+
+- [namesilo](https://www.namesilo.com/)

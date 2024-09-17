@@ -684,13 +684,34 @@ sessionA在T1时刻锁住了d=5的记录，但是在T2时刻sessionB更新语句
 4. 优化2: 索引上的等值查询，向右遍历时且最后一个值不满足等值条件的时候，next-key lock 退化为间隙锁。
 5. 一个bug：唯一索引上的范围查询会访问到不满足条件的第一个值为止。
 
+下面以表t为例来介绍一下这些规则。表t的建表语句和初始化语句如下。
+
+```sql
+CREATE TABLE `t` (
+  `id` int(11) NOT NULL,
+  `c` int(11) DEFAULT NULL,
+  `d` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `c` (`c`)
+) ENGINE=InnoDB;
+
+insert into t values(0,0,0),(5,5,5),
+(10,10,10),(15,15,15),(20,20,20),(25,25,25);
+```
+
 ### 案例一：等值查询间隙锁
 
 ![](https://img-blog.csdnimg.cn/20190305223017487.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
 
-1，根据原则1，sessionA加锁范围是 （5，10]
+**分析：**
 
-2，同时根据优化2，这是等值查询，而id=10不满足查询条件，next-key lock退化成间隙锁，因此最终加锁范围是 (5,10)
+- 步骤1：根据原则1，加锁(5, 10]
+- 步骤2：根据优化2，id=10不满足查询条件，因此退化为间隙锁(5, 10)
+
+**结论：**
+
+- Session B阻塞是因为id=8在间隙锁(5, 10)内
+- Session C可以执行是因为没有锁住id=10这行
 
 ### 案例二：非唯一索引等值锁
 
@@ -698,21 +719,50 @@ sessionA在T1时刻锁住了d=5的记录，但是在T2时刻sessionB更新语句
 
 ![](https://img-blog.csdnimg.cn/20190305223110638.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
 
-在这个例子中，lock in share mode 只锁覆盖索引，但是如果是 for update ，系统会认为你接下来要更新数据，因此会顺便给主键索引上满足条件的行加上锁。
+**分析：**
 
-锁是加在索引上的；需要注意的是，如果你要用 lock in share mode 来给行加读锁避免数据被更新的话，就必须的绕过覆盖索引的优化，在查询字段中加入索引中不存在的字段，因此查询时会回表，使用主键索引查询，从而在主键索引上加锁。例如sessionA 查询改为： select d from t where c=5 lock in share mode;
+- 步骤1：根据原则1，加锁(0, 5]
+- 步骤2：由于c是普通索引，因此还需要继续遍历，直到找到c=10，不满足条件。根据原则2，访问到的对象要加锁，因此要加(5, 10]。
+- 步骤3：同时根据优化2，这是一个等值查询，向右遍历的不满足条件的第一个值10，(5, 10]要退化为间隙锁(5, 10)
+- 因此加锁是索引c的next-key lock(0,5]和间隙锁(5,10)
+
+**结论：**
+
+- Session B可以执行是因为加锁的是索引c，而不是主键索引
+- Session C阻塞是因为c的插入值是7，在间隙锁(5, 10)范围内
 
 ### 案例三：主键索引范围锁
 
 ![](https://img-blog.csdnimg.cn/20190305223137125.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
 
-主键索引加锁：行锁 id=10 和 next-key lock(10, 15]
+**分析：**
+
+- 步骤1：根据原则1，加锁(5, 10]
+- 步骤2：根据优化1，退化为id=10的行锁
+- 步骤3：继续遍历，找到不满足id<11的值id=15，加锁(10, 15]
+
+因此加锁id=15的行锁和id的next-key lock(10, 15]
+
+**结论：**
+
+- 插入id=13被阻塞：next-key lock (10, 15]
+- 更新id=15被阻塞：next-key lock (10, 15]
 
 ### 案例四：非唯一索引范围锁
 
 ![](https://img-blog.csdnimg.cn/20190305223215883.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
 
-sessionA加锁是：索引c上的 (5,10],(10,15] 两个 next-key lock。主键id索引上id=10行锁。
+**分析：**
+
+- 步骤1：根据原则1，加锁(5, 10]
+- 步骤2：继续遍历，找到不满足c<11的值c=15，根据原则2，加锁(10, 15]
+
+因此加锁索引c (5, 10]和(10, 15]
+
+**结论：**
+
+- 插入c=8，被(5, 10]阻塞
+- 更新c=15，被(10, 15]阻塞
 
 ### 案例五：唯一索引范围锁 bug
 

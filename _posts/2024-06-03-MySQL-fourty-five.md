@@ -701,7 +701,7 @@ insert into t values(0,0,0),(5,5,5),
 
 ### 案例一：等值查询间隙锁
 
-![](https://img-blog.csdnimg.cn/20190305223017487.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+![11](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240919194209627.png)
 
 **分析：**
 
@@ -717,7 +717,7 @@ insert into t values(0,0,0),(5,5,5),
 
 覆盖索引上的锁：
 
-![](https://img-blog.csdnimg.cn/20190305223110638.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+![](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240919194221049.png)
 
 **分析：**
 
@@ -733,7 +733,7 @@ insert into t values(0,0,0),(5,5,5),
 
 ### 案例三：主键索引范围锁
 
-![](https://img-blog.csdnimg.cn/20190305223137125.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+![](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240919194504413.png)
 
 **分析：**
 
@@ -750,7 +750,7 @@ insert into t values(0,0,0),(5,5,5),
 
 ### 案例四：非唯一索引范围锁
 
-![](https://img-blog.csdnimg.cn/20190305223215883.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+![](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240919194601587.png)
 
 **分析：**
 
@@ -766,41 +766,154 @@ insert into t values(0,0,0),(5,5,5),
 
 ### 案例五：唯一索引范围锁 bug
 
-![](https://img-blog.csdnimg.cn/20190305223245835.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+![](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240919194821531.png)
 
-由于唯一索引的范围查询会扫描到第一个不满足条件的行为止，索引sessionA的加锁范围是 (10, 15], (15, 20]。
+**分析：**
 
-> 林晓斌认为：既然是唯一索引，当查询到id=15行时，就应该停止向前扫描，不必加(15, 20] next-key lock。
+- 步骤1：根据原则1，加锁(10, 15]，再根据优化1，退化为id=15的行锁
+- 步骤2：向右遍历，加锁(10, 15]
+- 步骤3：根据BUG，要访问到不满足条件的第一个值，即id=20，加锁(15 ,20]。
+
+因此加锁为(10, 15]和(15, 20]
+
+**结论：**
+
+- 更新id=20阻塞，被(15, 20]锁住
+- 插入id=16阻塞，被(15, 20]锁住
 
 ### 案例六：非唯一索引上存在“等值”的例子
 
-![](https://img-blog.csdnimg.cn/20190305223316511.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+![](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240919195316436.png)
 
 delete语句加锁的逻辑，其实是跟 select ... for update 是类似的，也就是文章开始时总结的几点。
 
-![](https://img-blog.csdnimg.cn/20190305223436975.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+```sql
+mysql> insert into t values(30,10,30);
+```
 
-![](https://img-blog.csdnimg.cn/20190305223502172.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+![](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240919195538874.png)
+
+![](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240919195552523.png)
 
 蓝色区域左右两边是虚线，表示开区间，即 (c=5,id=5)  和 (c=15,id=15) 这两行上都没有锁。
 
+**分析：**
+
+- 步骤1：根据原则1，(c=5,id=5)到(c=10,id=10)这个next-key lock
+- 步骤2：向右查找，直到碰到(c=15,id=15)这一行，循环才结束。根据优化2，这是一个等值查询，向右查找到了不满足条件的行，所以会退化成(c=10,id=10) 到 (c=15,id=15)的间隙锁
+
+因此加锁(c=5,id=5)到(c=10,id=10)这个next-key lock和(c=10,id=10)到(c=15,id=15)这个间隙锁
+
+**结论：**
+
+- 插入c=12阻塞，被(c=10,id=10)到(c=15,id=15)这个间隙锁锁住
+- 更新c=15成功，没有锁住c=15
+
 ### 案例七： limit 语句加锁
 
-![](https://img-blog.csdnimg.cn/20190305223532763.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+```sql
+mysql> insert into t values(30,10,30);
+```
+
+
+
+![](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240919195814737.png)
 
 加锁范围：(c=5,id=5) 到 (c=10,id=30)这个前开后闭区间。因为有 limit 2的限制，因此遍历到(c=10,id=30)这一行时，已满足条件，就结束了。
 
-![](https://img-blog.csdnimg.cn/2019030522355750.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+![](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240919195823935.png)
 
 这个例子的指导意义就是，在删除数据的时候尽量加limit。这样不仅可以控制删除数据的条数，让操作更安全，还可以减小加锁的范围。
 
+**分析：**
+
+- 步骤1：根据原则1，(5, 10]，因为c=10有两条行，因此遍历到这里就结束
+- 步骤2：因为是delete，因此加两个行锁（id=10和id=30）
+
+因此加锁c (5, 10)和两个行锁（id=10和id=30）
+
+**结论：**
+
+- 插入c=12成功，因为c=12没有被锁住
+
+说明：这个例子对我们实践的指导意义就是，在删除数据的时候尽量加limit。
+
 ### 案例八：一个死锁的例子
 
-![](https://img-blog.csdnimg.cn/20190305223630346.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+![](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240919202142182.png)
 
 sessionA在索引c上加锁： next-key lock (5,10] 和 间隙锁 (10,15)。sessionB的加锁过程是，先加间隙锁 (5,10)，加锁成功，再加行锁 c=10，这时候被锁住阻塞。sessionA这时执行insert语句，会被sessionB的间隙锁锁住。由于出现了死锁，InnoDB让sessionB回滚。
 
-在分析加锁规则时可以用 next-key lock来分析，但是具体执行的时候，是要分成间隙锁和行锁两段来执行的。
+在分析加锁规则时可以用 next-key lock来分析，但是具体执行的时候，是要分成间隙锁和行锁两段来执行的。**分析：**
+
+- 步骤1：根据原则1，加锁(5, 10]
+- 步骤2：继续遍历，直到c=15不满足条件，加锁(10, 15]，根据优化2，退化为(10, 15)
+
+**结论：**
+
+- Session B在等待锁，此时Session B已经加了间隙锁(5, 10)，在等待加行锁c=10。
+- Session A插入c=8，也在等待锁，从而导致死锁
+
+说明：next-key lock具体执行的时候，是要分成间隙锁和行锁两段来执行的。
+
+### 案例九：非唯一索引排序范围锁
+
+![img](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/3a7578e104612a188a2d574eaa3bd81e.png)
+
+**分析：**
+
+- 步骤1：先执行c=20，加锁(15, 20]
+- 步骤2：根据优化2，加间隙锁(20, 25)
+- 步骤3：再执行c=15，加锁(10, 15]
+- 步骤4：继续向左遍历，找到记录id=10为止，加锁(5, 10]
+
+在扫描过程中，c=20、c=15、c=10这三行都存在值，由于是select *，所以会在主键id上加三个行锁。
+
+因此要加锁索引c (5, 25)和三个行锁（id=10，id=15，id=20）。
+
+**结论：**
+
+- 插入c=6，被c(5, 25)锁住
+
+### 案例十：不等号条件里的等值查询
+
+```sql
+begin;
+select * from t where id>9 and id<12 order by id desc for update;
+```
+
+在执行过程中，通过树搜索的方式定位记录的时候，用的是“等值查询”的方法。
+
+**分析：**
+
+- 步骤1：根据原则1，加锁 (10, 15]
+- 步骤2：根据优化2，退化为(10, 15)
+- 步骤3：向左遍历，找到id=10，加锁(5, 10]，继续找到id=5为止，加锁(0, 5]
+
+### 案例十一：in范围锁
+
+```sql
+begin;
+select id from t where c in(5,20,10) lock in share mode;
+```
+
+**分析：**
+
+说明：锁是逐个逐个加的。
+
+- 步骤1：先c=5，加(0, 5]和(5, 10)
+- 步骤2：再c=10，加(5, 10]和(10, 15)
+- 步骤3：后c=20，加(15, 20]和(20, 25)
+
+间隙锁是不互斥的，因为加锁范围是(0, 25)，除c=15外。
+
+**死锁情况**
+
+```sql
+select id from t where c in(5,20,10) order by c desc for update;
+```
+
+有一种情况，同时执行倒序语句，因为刚好同时执行，逐渐加锁（倒序加锁），会出现死锁情况。
 
 ### 小结
 

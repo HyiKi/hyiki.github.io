@@ -57,3 +57,7 @@ excerpt: 沉浸在每天的开发工作，会错过很多遇到的宝藏，来�
 ## 域名服务
 
 - [namesilo](https://www.namesilo.com/)
+
+## 美国虚拟visa
+
+- [onekey](https://card.onekey.so/)

@@ -61,3 +61,14 @@ excerpt: 沉浸在每天的开发工作，会错过很多遇到的宝藏，来�
 ## 美国虚拟visa
 
 - [onekey](https://card.onekey.so/)
+
+## docker容器
+
+- [metabase](https://hub.docker.com/r/metabase/metabase)
+- [portainer](https://hub.docker.com/r/portainer/portainer)
+- [gpt4free](https://hub.docker.com/r/hlohaus789/g4f)
+- [openvpn proxy](https://hub.docker.com/r/curve25519xsalsa20poly1305/openvpn)
+
+## 数据结构可视化
+
+- [cs usfca](https://www.cs.usfca.edu/~galles/visualization/)

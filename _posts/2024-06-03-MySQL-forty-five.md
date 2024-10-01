@@ -46,7 +46,7 @@ redo log和binlog不同点：
 
 update语句执行流程：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190831154617226.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240926144728075.png)
 
 将redo log的写入拆成了两个步骤：prepare 和 commit，这就是“两阶段提交”。
 
@@ -163,9 +163,20 @@ MDL: 不需要显示使用，在访问一个表时会被自动加上。MDL的作
 
 如何安全加字段：
 
-* 解决长事物。如果要做DDL变更的表有长事物在执行，要考虑暂停DDL，或者kill掉这个长事物。如果这个表是热点表，有频繁的请求，那么kill未必管用，因为新的请求马上就来了。可以通过在alter table语句里面设定等待时间，如果等待时间内能拿到MDL写锁就执行，拿不到就放弃，不用阻塞后面的业务语句，之后再重试这个过程。
+* 事务中的 MDL 锁，在语句执行开始时申请，但是语句结束后并不会马上释放，而会等到整个事务提交后再释放
 
-MariaDB 已经合并了AliSQL的这个功能。
+* 首先要解决长事务，事务不提交，会一直占着 MDL 锁，如果要做 DDL 变更的表刚好有长事务在执行，要考虑先暂停 DDL，或者 kill 掉这个长事务
+
+* 如果要变更的表是一个热点表，请求很频繁，不得不加个字段，该怎么做呢？
+
+  * 在 alter table 语句里面设定等待时间，在这个指定的等待时间里面能够拿到 MDL 写锁最好，拿不到也不要阻塞后面的业务语句，先放弃
+  * 再通过重试命令重复这个过程
+  * MariaDB 已经合并了 AliSQL 的这个功能，所以这两个开源分支目前都支持 DDL NOWAIT/WAIT n 这个语法
+
+  ```sql
+  ALTER TABLE tbl_name NOWAIT add column ...
+  ALTER TABLE tbl_name WAIT N add column ... 
+  ```
 
 ## 07| 行锁功过：怎么减少行锁对性能的影响？
 
@@ -268,9 +279,9 @@ analyze table t 命令，可以用来重新统计索引信息。在实践中，�
 
 MySQL支持前缀索引，你可以定义字符串的一部分作为索引。默认地，创建时不指定长度索引就会包含整个字符串。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190831153158870.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240926145549796.png)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190831153242687.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ=,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTA2NTcwOTQ%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240926145604234.png)
 
 前缀索引只取字符串前几位，比整个字符串索引占用空间更小。但可能会增加额外的记录扫描次数，因为依据前缀查询后，要去主键索引查找判断是否正确，这时有可能前缀一样后面的字符串不一致，就需要再去字符串索引查找，这就增加了记录扫描次数（回主键查找次数）。
 

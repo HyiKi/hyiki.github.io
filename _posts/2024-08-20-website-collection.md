@@ -38,6 +38,7 @@ excerpt: 沉浸在每天的开发工作，会错过很多遇到的宝藏，来�
 - [阿里通义千问](https://tongyi.aliyun.com/qianwen/)
 - [Google Gemini](https://gemini.google.com/app)
 - [Anthropic claude](https://claude.ai/)
+- [Luma AI](https://lumalabs.ai/)
 
 ## LOL
 
@@ -72,3 +73,13 @@ excerpt: 沉浸在每天的开发工作，会错过很多遇到的宝藏，来�
 ## 数据结构可视化
 
 - [cs usfca](https://www.cs.usfca.edu/~galles/visualization/)
+
+## 科学上网
+
+- [Justmysocks](https://justmysocks.net/)
+- [Shadowsocks](https://portal.shadowsocks.au/aff.php?aff=77716)
+
+## IDEA
+
+- [jprofiler](https://plugins.jetbrains.com/plugin/253-jprofiler)
+- 

@@ -82,4 +82,7 @@ excerpt: 沉浸在每天的开发工作，会错过很多遇到的宝藏，来�
 ## IDEA
 
 - [jprofiler](https://plugins.jetbrains.com/plugin/253-jprofiler)
-- 
+
+## 出行
+
+- [flight aware](https://zh.flightaware.com/)

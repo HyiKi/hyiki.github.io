@@ -74,6 +74,7 @@ excerpt: 沉浸在每天的开发工作，会错过很多遇到的宝藏，来�
 
 - [cs usfca](https://www.cs.usfca.edu/~galles/visualization/)
 - [mermaid](https://mermaid.js.org/intro/)
+- [metabase](https://www.metabase.com/)
 
 ## 科学上网
 
@@ -87,3 +88,7 @@ excerpt: 沉浸在每天的开发工作，会错过很多遇到的宝藏，来�
 ## 出行
 
 - [flight aware](https://zh.flightaware.com/)
+
+## 工具类
+
+- [在线enc解密](https://www.devglan.com/online-tools/jasypt-online-encryption-decryption)

@@ -1,6 +1,6 @@
 ---
 title: Algorithm
-date:  2021-08-31 12:20:36 +0800
+date:  2019-12-19 12:20:36 +0800
 category: Original
 tags: Algorithm
 excerpt: 记录一些有趣的算法，想与你分享。
@@ -295,20 +295,42 @@ void dijkstra(int n){
 #### 树状数组
 
 ```c++
-int lowbit(int k){
-    return k&-k;
+/**
+ * 获取数字二进制最低位:树状数组管辖范围
+ *
+ * @param k 数字
+ * @return 最低位
+ */
+int lowbit(int k) {
+    return k & -k;
 }
-void add(int k){
-    while(k<=maxn){
+
+/**
+ * 往树状数组位置k加1
+ *
+ * @param k    数字
+ * @param maxn 树状数组长度
+ * @param y    树状数组
+ */
+void add(int k, int maxn, int[] y) {
+    while (k <= maxn) {
         y[k]++;
-        k+=lowbit(k);
+        k += lowbit(k);
     }
 }
-int sum(int k){
-    int s=0;
-    while(k>0){
-        s+=y[k];
-        k-=lowbit(k);
+
+/**
+ * 树状数组求和
+ *
+ * @param k 数字
+ * @param y 树状数组
+ * @return [0, k]总和
+ */
+int sum(int k, int[] y) {
+    int s = 0;
+    while (k > 0) {
+        s += y[k];
+        k -= lowbit(k);
     }
     return s;
 }

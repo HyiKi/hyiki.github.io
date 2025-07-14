@@ -8,87 +8,99 @@ excerpt: 沉浸在每天的开发工作，会错过很多遇到的宝藏，来�
 
 * content
 {:toc}
+
 # 网站收集
 
 ## 地址校验 & 修正服务
 
-- [Google 地址校验服务](https://developers.google.com/maps/documentation/address-validation/overview?hl=zh-cn)
-- [easypost 地址校验服务](https://www.easypost.com/address-verification-api)
-- [USPS 地址校验服务](https://www.smarty.com/articles/usps-address-verification)
-- [Amazon 地址服务](https://aws.amazon.com/cn/location/)
+* [Google 地址校验服务](https://developers.google.com/maps/documentation/address-validation/overview?hl=zh-cn)
+* [easypost 地址校验服务](https://www.easypost.com/address-verification-api)
+* [USPS 地址校验服务](https://www.smarty.com/articles/usps-address-verification)
+* [Amazon 地址服务](https://aws.amazon.com/cn/location/)
 
 ## 智能仓储解决方案
 
-- [沃港智能](https://www.wogangtech.com/)
+* [沃港智能](https://www.wogangtech.com/)
 
 ## 内网穿透
 
-- [ngrok](https://dashboard.ngrok.com/get-started/setup/)
+* [ngrok](https://dashboard.ngrok.com/get-started/setup/)
 
 ## Spring Framework
 
-- [spring AI](https://docs.spring.io/spring-ai/reference/getting-started.html)
+* [spring AI](https://docs.spring.io/spring-ai/reference/getting-started.html)
 
 ## AI 大模型服务
 
-- [腾讯混元大模型](https://console.cloud.tencent.com/hunyuan/start)
-- [Open AI ChatGPT](https://chatgpt.com/)
-- [百度千帆大模型](https://console.bce.baidu.com/qianfan)
-- [字节豆包大模型](https://www.doubao.com/chat/)
-- [阿里通义千问](https://tongyi.aliyun.com/qianwen/)
-- [Google Gemini](https://gemini.google.com/app)
-- [Anthropic claude](https://claude.ai/)
-- [Luma AI](https://lumalabs.ai/)
+* [腾讯混元大模型](https://console.cloud.tencent.com/hunyuan/start)
+* [Open AI ChatGPT](https://chatgpt.com/)
+* [百度千帆大模型](https://console.bce.baidu.com/qianfan)
+* [字节豆包大模型](https://www.doubao.com/chat/)
+* [阿里通义千问](https://tongyi.aliyun.com/qianwen/)
+* [Google Gemini](https://gemini.google.com/app)
+* [Anthropic claude](https://claude.ai/)
+* [Luma AI](https://lumalabs.ai/)
+* [X AI(GROK)](https://x.ai/)
+* [阿里AI抠图 - 通用分割](https://vision.aliyun.com/experience/detail?tagName=imageseg&children=SegmentCommonImage)
+* [阿里AI试衣 - outfitanyone](https://help.aliyun.com/zh/model-studio/developer-reference/outfitanyone-api)
+* [deepseek](https://chat.deepseek.com/)
+* [perplexity](https://www.perplexity.ai/?login-source=tryPro)
+* [metaso](https://metaso.cn/)
+* [dify](https://dify.ai/)
 
 ## LOL
 
-- [DraftGap](https://draftgap.com/)
+* [DraftGap](https://draftgap.com/)
 
 ## 开发平台
 
-- [微信公众平台](https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login)
+* [微信公众平台](https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login)
 
 ## 云服务
 
-- [racknerd](https://www.racknerd.com/)
-- [vercel](https://vercel.com/)
-- [netlify](https://www.netlify.com/)
-- [cloudflare](https://dash.cloudflare.com/)
+* [racknerd](https://www.racknerd.com/)
+* [vercel](https://vercel.com/)
+* [netlify](https://www.netlify.com/)
+* [cloudflare](https://dash.cloudflare.com/)
+* [qdrant](https://qdrant.tech/)
 
 ## 域名服务
 
-- [namesilo](https://www.namesilo.com/)
+* [namesilo](https://www.namesilo.com/)
 
 ## 美国虚拟visa
 
-- [onekey](https://card.onekey.so/)
+* [onekey](https://card.onekey.so/)
+* [payoneer](https://www.payoneer.com/)
 
 ## docker容器
 
-- [metabase](https://hub.docker.com/r/metabase/metabase)
-- [portainer](https://hub.docker.com/r/portainer/portainer)
-- [gpt4free](https://hub.docker.com/r/hlohaus789/g4f)
-- [openvpn proxy](https://hub.docker.com/r/curve25519xsalsa20poly1305/openvpn)
+* [metabase](https://hub.docker.com/r/metabase/metabase)
+* [portainer](https://hub.docker.com/r/portainer/portainer)
+* [gpt4free](https://hub.docker.com/r/hlohaus789/g4f)
+* [openvpn proxy](https://hub.docker.com/r/curve25519xsalsa20poly1305/openvpn)
 
 ## 可视化相关
 
-- [cs usfca](https://www.cs.usfca.edu/~galles/visualization/)
-- [mermaid](https://mermaid.js.org/intro/)
-- [metabase](https://www.metabase.com/)
+* [cs usfca 数据结构](https://www.cs.usfca.edu/~galles/visualization/)
+* [mermaid 图UML](https://mermaid.js.org/intro/)
+* [metabase 数据库可视化](https://www.metabase.com/)
+* [axure 设计网页原型UI](https://www.axure.com/)
 
 ## 科学上网
 
-- [Justmysocks](https://justmysocks.net/)
-- [Shadowsocks](https://portal.shadowsocks.au/aff.php?aff=77716)
+* [Justmysocks](https://justmysocks.net/)
+* [Shadowsocks](https://portal.shadowsocks.au/aff.php?aff=77716)
 
 ## IDEA
 
-- [jprofiler](https://plugins.jetbrains.com/plugin/253-jprofiler)
+* [jprofiler](https://plugins.jetbrains.com/plugin/253-jprofiler)
 
 ## 出行
 
-- [flight aware](https://zh.flightaware.com/)
+* [flight aware](https://zh.flightaware.com/)
 
 ## 工具类
 
-- [在线enc解密](https://www.devglan.com/online-tools/jasypt-online-encryption-decryption)
+* [在线enc解密](https://www.devglan.com/online-tools/jasypt-online-encryption-decryption)
+* [AI detector](https://undetectable.ai/)

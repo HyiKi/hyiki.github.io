@@ -819,3 +819,14 @@ where info = "SELECT SLEEP(599)"
 ![img](https://raw.githubusercontent.com/HyiKi/picgo-asset/main/(null)-20240830151358295.(null))
 
 在dms中通过右上角的标记进入superadmin功能,可暂时屏蔽安全规则,**非紧急情况请勿使用**
+
+---
+
+### 26 distinct on 用法
+
+```sql
+-- 查询每个渠道最新的订单
+select distinct on (channel) channel, channel_order_id, oid, order_add_time
+from "order" order by channel, order_add_time desc;
+```
+

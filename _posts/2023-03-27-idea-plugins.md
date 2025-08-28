@@ -34,3 +34,5 @@ excerpt: 工作学习中好用的插件
 * ~~Alibaba Cloud AI Coding Assistant~~ tabnine/copilot
   * 代码自动补全提示
   * 代码方法搜索
+* MyBatis Log Free
+  * 生成执行SQL

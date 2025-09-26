@@ -11,14 +11,14 @@ excerpt: 沉浸在每天的开发工作，会错过很多遇到的宝藏，来�
 
 # 网站收集
 
-## 地址校验 & 修正服务
+## 地址服务
 
 * [Google 地址校验服务](https://developers.google.com/maps/documentation/address-validation/overview?hl=zh-cn)
 * [easypost 地址校验服务](https://www.easypost.com/address-verification-api)
 * [USPS 地址校验服务](https://www.smarty.com/articles/usps-address-verification)
 * [Amazon 地址服务](https://aws.amazon.com/cn/location/)
 
-## 智能仓储解决方案
+## 仓储解决方案
 
 * [沃港智能](https://www.wogangtech.com/)
 
@@ -52,9 +52,10 @@ excerpt: 沉浸在每天的开发工作，会错过很多遇到的宝藏，来�
 
 * [DraftGap](https://draftgap.com/)
 
-## 开发平台
+## 开放平台
 
 * [微信公众平台](https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login)
+* [serper](https://serper.dev/)
 
 ## 云服务
 

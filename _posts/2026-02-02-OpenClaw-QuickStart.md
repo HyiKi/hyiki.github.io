@@ -52,6 +52,7 @@ proxy_run openclaw onboard --install-daemon
 **为什么需要 `--install-daemon`**: 这个参数会安装 Gateway 服务作为系统守护进程，让 OpenClaw 在后台持续运行，即使关闭终端也不会停止。
 
 **命令说明**:
+
 * `proxy_run`: 如果你的网络环境需要代理才能访问某些服务，使用代理运行命令
 * `openclaw onboard`: 启动交互式配置向导
 * `--install-daemon`: 安装后台服务
@@ -61,12 +62,14 @@ proxy_run openclaw onboard --install-daemon
 启动时会显示安全警告，需要仔细阅读并确认：
 
 **为什么需要安全警告**:
+
 * OpenClaw 是一个业余项目，仍处于测试阶段，可能存在未知问题
 * 这个机器人可以读取文件并在启用工具时运行操作，具有系统访问权限
 * 恶意提示可能会诱骗它执行不安全操作
 * 需要用户充分理解风险后再继续
 
 **安全建议**:
+
 * 使用配对/白名单 + 提及门控
 * 使用沙箱 + 最小权限工具
 * 定期运行安全审计：`openclaw security audit --deep`
@@ -80,11 +83,13 @@ proxy_run openclaw onboard --install-daemon
 系统会询问 "Onboarding mode"，推荐选择 **QuickStart**。
 
 **为什么选择 QuickStart**:
+
 * 快速配置，适合首次使用
 * 使用默认的安全设置（Loopback 绑定，Token 认证）
 * 稍后可以随时调整配置
 
 **配置选项**:
+
 * **QuickStart**: 快速开始，使用默认设置
 * **Custom**: 自定义配置，适合有经验的用户
 
@@ -102,6 +107,7 @@ skills.nodeManager: npm
 ```
 
 **为什么需要检测现有配置**:
+
 * 避免覆盖已有配置
 * 可以选择使用现有配置或重新配置
 * 保留之前的工作空间和会话数据
@@ -113,11 +119,13 @@ skills.nodeManager: npm
 #### 4.1 选择模型提供商
 
 系统会询问 "Model/auth provider"，可以选择：
+
 * **Qwen**: 通义千问（国内用户推荐）
 * **Moonshot**: 月之暗面
 * **其他**: 根据你的需求选择
 
 **为什么需要配置模型**:
+
 * OpenClaw 需要 AI 模型来生成回复
 * 不同模型有不同的特点和价格
 * 需要 API 密钥或 OAuth 认证
@@ -144,6 +152,7 @@ skills.nodeManager: npm
 4. **验证配置**: 系统会显示 "Qwen OAuth complete"
 
 **配置结果**:
+
 * **默认模型**: `qwen-portal/coder-model`
 * **Base URL**: `https://portal.qwen.ai/v1`（可在配置中覆盖）
 
@@ -154,6 +163,7 @@ skills.nodeManager: npm
 OpenClaw 支持多种聊天渠道，在快速启动中可以选择 "Skip for now" 稍后配置。
 
 **支持的渠道**:
+
 * **Telegram**: 最简单的方式，注册一个 bot 即可开始
 * **WhatsApp**: 使用自己的号码，建议使用单独的手机 + eSIM
 * **Discord**: 目前支持良好
@@ -165,6 +175,7 @@ OpenClaw 支持多种聊天渠道，在快速启动中可以选择 "Skip for now
 * **其他**: Nostr、Microsoft Teams、Mattermost、Nextcloud Talk、Matrix、BlueBubbles、LINE、Zalo 等
 
 **DM 安全机制**:
+
 * **默认模式**: 配对模式，未知 DM 会收到配对代码
 * **批准配对**: `openclaw pairing approve <channel> <code>`
 * **公开 DM**: 需要 `dmPolicy="open" + allowFrom=["*"]`
@@ -176,16 +187,19 @@ OpenClaw 支持多种聊天渠道，在快速启动中可以选择 "Skip for now
 Skills 是 OpenClaw 的功能扩展，提供各种工具和能力。
 
 **Skills 状态**:
+
 * **Eligible**: 7 个可用的技能（已满足所有依赖）
 * **Missing requirements**: 38 个缺少依赖的技能（需要安装依赖）
 * **Blocked by allowlist**: 0 个被阻止的技能
 
 **为什么需要配置 Skills**:
+
 * Skills 提供各种功能，如文件操作、网络搜索、代码执行等
 * 某些 Skills 需要额外的依赖或配置
 * 可以根据需求选择安装
 
 **操作选择**:
+
 * **安装缺失的依赖**: 推荐，可以启用更多功能
 * **跳过稍后配置**: 可以稍后通过 `openclaw configure` 配置
 
@@ -196,11 +210,13 @@ Skills 是 OpenClaw 的功能扩展，提供各种工具和能力。
 Hooks 允许你在代理命令发出时自动化操作。
 
 **可用的 Hooks**:
+
 * **boot-md**: 启动时执行，可以初始化工作空间
 * **command-logger**: 命令日志记录，记录所有命令执行
 * **session-memory**: 会话记忆保存，保存对话上下文
 
 **为什么需要 Hooks**:
+
 * 自动化常见操作
 * 记录和追踪代理行为
 * 持久化会话数据
@@ -229,6 +245,7 @@ Gateway 是 OpenClaw 的控制平面服务，负责管理代理、会话和工�
 QuickStart 使用 Node.js 作为 Gateway 服务运行时（稳定且受支持）。
 
 **为什么使用 Node.js**:
+
 * 稳定且受官方支持
 * 跨平台兼容性好
 * 社区支持完善
@@ -245,6 +262,7 @@ QuickStart 使用 Node.js 作为 Gateway 服务运行时（稳定且受支持）
 4. **日志位置**: `~/.openclaw/logs/gateway.log`
 
 **为什么需要守护进程**:
+
 * 让 Gateway 在后台持续运行
 * 即使关闭终端也不会停止服务
 * 系统重启后自动启动
@@ -277,6 +295,7 @@ openclaw tui - ws://127.0.0.1:18789 - agent main - session main
 ```
 
 **参数说明**:
+
 * `tui`: 启动终端用户界面
 * `ws://127.0.0.1:18789`: Gateway WebSocket 地址
 * `agent main`: 使用名为 "main" 的代理
@@ -294,6 +313,7 @@ agent main | session main | qwen-portal/coder-model | tokens 16k/128k (13%)
 ```
 
 **界面元素**:
+
 * **系统信息**: 节点名称、IP 地址、应用版本、运行模式
 * **连接状态**: `connected | idle` 表示已连接并空闲
 * **代理信息**: 当前使用的代理、会话、模型和 token 使用情况
@@ -305,6 +325,7 @@ agent main | session main | qwen-portal/coder-model | tokens 16k/128k (13%)
 **开始对话**: 直接在 TUI 中输入消息，按 Enter 发送。
 
 **常用命令**:
+
 * `/new`: 开启新对话，清除当前会话上下文
 * `/reset`: 重置会话，等同于 `/new`
 * `/help`: 查看帮助信息
@@ -317,6 +338,7 @@ agent main | session main | qwen-portal/coder-model | tokens 16k/128k (13%)
 4. **Token 使用**: 注意观察 token 使用情况，避免超出模型限制
 
 **为什么使用 TUI**:
+
 * 最直接的交互方式
 * 可以看到完整的对话历史
 * 适合调试和开发
